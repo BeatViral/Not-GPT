@@ -1,0 +1,14 @@
+.env
+.env.local
+.env.production
+.agents/
+.codex/
+.next/
+node_modules/
+.pnpm-store/
+coverage/
+dist/
+*.tsbuildinfo
+*.log
+dev-server*.log
+.DS_Store
