@@ -6,21 +6,20 @@
     <title>NOT GPT</title>
     <meta
       name="description"
-      content="NOT GPT is a search engine that questions its sources before answering."
+      content="NOT GPT questions sources, repetition, incentives and uncertainty before showing you an answer."
     />
     <style>
       :root {
-        color-scheme: light;
-        --ink: #101216;
-        --paper: #fbfaf7;
-        --panel: #ffffff;
-        --soft: #f2f4f1;
-        --line: #d9d7ce;
-        --muted: #646a68;
-        --moss: #385f50;
-        --blue: #245f94;
-        --rust: #9a4f2e;
-        --amber: #a66c00;
+        --blue: #0757e6;
+        --blue-2: #0d63f3;
+        --navy: #07143d;
+        --text: #162242;
+        --muted: #6b748b;
+        --line: #c8d8f7;
+        --line-2: #dbe7fb;
+        --soft: #edf5ff;
+        --paper: #ffffff;
+        --glow: rgba(6, 84, 220, 0.12);
       }
 
       * {
@@ -28,25 +27,47 @@
       }
 
       html {
-        scroll-behavior: smooth;
+        min-height: 100%;
       }
 
       body {
         margin: 0;
         min-height: 100vh;
-        background:
-          linear-gradient(180deg, rgba(251, 250, 247, 0.98), rgba(247, 249, 248, 0.98)),
-          repeating-linear-gradient(
-            90deg,
-            rgba(16, 18, 22, 0.035) 0,
-            rgba(16, 18, 22, 0.035) 1px,
-            transparent 1px,
-            transparent 84px
-          );
-        color: var(--ink);
+        color: var(--navy);
         font-family:
-          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial,
-          sans-serif;
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Arial, sans-serif;
+        background:
+          radial-gradient(circle at 50% 20%, #ffffff 0, #ffffff 34%, #f7fbff 68%, #eef6ff 100%);
+        overflow-x: hidden;
+      }
+
+      body::before,
+      body::after {
+        position: fixed;
+        top: 138px;
+        z-index: -1;
+        width: 560px;
+        height: 420px;
+        content: "";
+        opacity: 0.62;
+        background-image: repeating-radial-gradient(
+          ellipse at center,
+          transparent 0 15px,
+          rgba(6, 90, 230, 0.18) 16px 17px,
+          transparent 18px 31px
+        );
+        pointer-events: none;
+      }
+
+      body::before {
+        left: -255px;
+        transform: rotate(13deg);
+      }
+
+      body::after {
+        right: -210px;
+        transform: rotate(-10deg);
       }
 
       a {
@@ -55,7 +76,7 @@
       }
 
       button,
-      textarea {
+      input {
         font: inherit;
       }
 
@@ -64,420 +85,532 @@
       }
 
       :focus-visible {
-        outline: 3px solid var(--blue);
+        outline: 3px solid rgba(7, 87, 230, 0.35);
         outline-offset: 3px;
       }
 
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
       .shell {
-        width: min(1120px, calc(100% - 32px));
+        width: min(1720px, calc(100% - 140px));
         margin: 0 auto;
       }
 
       .topbar {
-        border-bottom: 1px solid var(--line);
-        background: rgba(251, 250, 247, 0.94);
-        backdrop-filter: blur(14px);
+        height: 88px;
+        border-bottom: 1px solid #d6e1f4;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(18px);
       }
 
       .nav {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
-        min-height: 70px;
+        height: 88px;
+        gap: 32px;
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
-        font-weight: 850;
+        gap: 13px;
+        color: var(--navy);
+        font-size: 39px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
       }
 
-      .mark {
-        display: grid;
-        width: 38px;
-        height: 38px;
-        place-items: center;
-        border-radius: 8px;
-        background: var(--ink);
-        color: var(--paper);
+      .logo-icon {
+        width: 55px;
+        height: 55px;
+        color: var(--blue);
+        flex: 0 0 auto;
       }
 
-      .navlinks {
+      .nav-links {
         display: flex;
         align-items: center;
-        gap: 8px;
-        color: rgba(16, 18, 22, 0.68);
-        font-size: 14px;
-        font-weight: 760;
+        justify-content: center;
+        flex: 1;
+        gap: clamp(34px, 4vw, 64px);
+        margin-left: 34px;
+        color: var(--navy);
+        font-size: 20px;
+        font-weight: 650;
       }
 
-      .navlinks a {
-        border-radius: 8px;
-        padding: 10px 12px;
+      .nav-links a {
+        position: relative;
+        padding: 32px 0 29px;
       }
 
-      .navlinks a:hover {
-        background: rgba(16, 18, 22, 0.06);
-        color: var(--ink);
+      .nav-links a.active {
+        color: var(--blue);
+        font-weight: 800;
+      }
+
+      .nav-links a.active::after {
+        position: absolute;
+        left: -2px;
+        right: -2px;
+        bottom: 20px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--blue);
+        content: "";
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        border-radius: 9px;
+        padding: 0 28px;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .nav-button.secondary {
+        border: 1.5px solid #6c7898;
+        background: #fff;
+        color: var(--navy);
+      }
+
+      .nav-button.primary {
+        border: 1.5px solid var(--blue);
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 9px 18px rgba(7, 87, 230, 0.18);
       }
 
       main {
-        padding: 42px 0 70px;
+        padding: 20px 0 14px;
       }
 
       .hero {
-        max-width: 940px;
-      }
-
-      .eyebrow {
-        margin: 0 0 14px;
-        color: var(--moss);
-        font-size: 13px;
-        font-weight: 850;
-        letter-spacing: 0.16em;
-        text-transform: uppercase;
+        text-align: center;
       }
 
       h1 {
-        margin: 0;
-        font-size: clamp(42px, 7vw, 86px);
-        line-height: 0.98;
-        letter-spacing: 0;
+        max-width: 1070px;
+        margin: 0 auto;
+        color: var(--navy);
+        font-size: clamp(48px, 4.95vw, 77px);
+        font-weight: 930;
+        line-height: 1.05;
+        letter-spacing: -0.055em;
+      }
+
+      .blue-line {
+        display: block;
+        color: var(--blue);
+        font-size: clamp(46px, 4.3vw, 63px);
+        line-height: 1.05;
+        letter-spacing: -0.045em;
       }
 
       .subhead {
-        margin: 20px 0 0;
-        color: var(--blue);
-        font-size: clamp(26px, 3.6vw, 46px);
-        font-weight: 850;
-        line-height: 1.08;
+        max-width: 720px;
+        margin: 8px auto 22px;
+        color: #303a56;
+        font-size: 23px;
+        line-height: 1.25;
+        letter-spacing: 0.01em;
       }
 
-      .support {
-        max-width: 760px;
-        margin: 20px 0 0;
-        color: rgba(16, 18, 22, 0.72);
-        font-size: 19px;
-        line-height: 1.65;
+      .search-wrap {
+        max-width: 1026px;
+        margin: 0 auto;
       }
 
-      .search-card {
-        margin-top: 32px;
-        overflow: hidden;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--panel);
-        box-shadow: 0 24px 70px rgba(16, 18, 22, 0.08);
-      }
-
-      .search-label {
-        display: flex;
+      .search-bar {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr) auto;
         align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        border-bottom: 1px solid var(--line);
-        padding: 14px 16px;
-        color: var(--muted);
-        font-size: 13px;
-        font-weight: 760;
+        min-height: 90px;
+        border: 1.8px solid var(--blue);
+        border-radius: 13px;
+        background: var(--paper);
+        box-shadow: 0 18px 38px rgba(7, 87, 230, 0.08);
+        padding: 0 21px;
       }
 
-      .demo-pill {
+      .search-icon {
+        color: #8d97ad;
+        width: 30px;
+        height: 30px;
+      }
+
+      .question {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: 0;
+        color: var(--navy);
+        font-size: 23px;
+        background: transparent;
+      }
+
+      .question::placeholder {
+        color: #767f96;
+      }
+
+      .search-button {
         display: inline-flex;
         align-items: center;
-        border: 1px solid rgba(166, 108, 0, 0.28);
-        border-radius: 8px;
-        background: rgba(166, 108, 0, 0.09);
-        color: var(--amber);
-        padding: 6px 9px;
-        font-size: 12px;
-        font-weight: 850;
+        justify-content: center;
+        gap: 13px;
+        min-height: 55px;
+        border: 0;
+        border-radius: 9px;
+        background: var(--blue);
+        color: #fff;
+        padding: 0 28px;
+        font-size: 20px;
+        font-weight: 830;
         white-space: nowrap;
+        box-shadow: 0 10px 18px rgba(7, 87, 230, 0.19);
       }
 
-      textarea {
-        display: block;
-        width: 100%;
-        min-height: 142px;
-        resize: vertical;
-        border: 0;
-        background: #f6f4ef;
-        color: var(--ink);
-        padding: 20px;
-        font-size: 18px;
-        line-height: 1.55;
-        outline: none;
+      .search-button svg {
+        width: 30px;
+        height: 30px;
       }
 
-      .search-actions {
+      .keys {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        border-top: 1px solid var(--line);
-        padding: 14px;
-      }
-
-      .hint {
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      .primary {
-        min-height: 46px;
-        border: 0;
-        border-radius: 8px;
-        background: var(--ink);
-        color: var(--paper);
-        padding: 0 18px;
-        font-weight: 850;
-      }
-
-      .primary:disabled {
-        cursor: wait;
-        opacity: 0.7;
-      }
-
-      .examples {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 14px;
-      }
-
-      .example {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--panel);
-        color: rgba(16, 18, 22, 0.7);
-        padding: 10px 12px;
-        text-align: left;
-        font-size: 13px;
-        font-weight: 750;
-      }
-
-      .example:hover {
-        border-color: var(--blue);
-        color: var(--ink);
-      }
-
-      .result-area {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 340px;
-        gap: 18px;
-        margin-top: 26px;
-        align-items: start;
-      }
-
-      .progress,
-      .answer,
-      .audit,
-      .method {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--panel);
-      }
-
-      .progress {
-        padding: 16px;
-      }
-
-      .panel-title {
-        margin: 0;
-        font-size: 18px;
-      }
-
-      .progress-list {
-        display: grid;
-        gap: 8px;
-        margin: 14px 0 0;
-        padding: 0;
-        list-style: none;
-      }
-
-      .stage {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-height: 43px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--soft);
-        padding: 9px 11px;
-        color: rgba(16, 18, 22, 0.58);
-        font-size: 13px;
-        font-weight: 760;
-      }
-
-      .stage::before {
-        content: "";
-        width: 12px;
-        height: 12px;
-        border: 2px solid rgba(36, 95, 148, 0.34);
-        border-radius: 999px;
-      }
-
-      .stage.done {
-        background: rgba(56, 95, 80, 0.1);
-        color: var(--ink);
-      }
-
-      .stage.done::before {
-        border-color: var(--moss);
-        background: var(--moss);
-      }
-
-      .answer {
-        overflow: hidden;
-      }
-
-      .answer-header {
-        border-bottom: 1px solid var(--line);
-        padding: 18px;
-      }
-
-      .answer-header h2 {
-        margin: 12px 0 0;
-        font-size: 28px;
-      }
-
-      .answer-body {
-        display: grid;
+        justify-content: center;
         gap: 14px;
-        padding: 18px;
-      }
-
-      .notice {
-        border: 1px dashed var(--line);
-        border-radius: 8px;
-        background: var(--soft);
-        padding: 16px;
-        color: rgba(16, 18, 22, 0.66);
-        font-size: 15px;
-        line-height: 1.55;
-      }
-
-      .answer-section {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #f7f5f0;
-        padding: 16px;
-      }
-
-      .answer-section h3 {
-        margin: 0;
+        margin: 17px 0 18px;
+        color: #303a56;
         font-size: 16px;
       }
 
-      .answer-section p,
-      .answer-section li,
-      .method p,
-      .audit p {
-        color: rgba(16, 18, 22, 0.68);
-        font-size: 14px;
-        line-height: 1.62;
+      .key {
+        display: inline-flex;
+        align-items: center;
+        min-height: 31px;
+        border: 1px solid #aab8d2;
+        border-radius: 6px;
+        background: linear-gradient(180deg, #f6f8fc, #e8eef8);
+        padding: 0 10px;
+        color: #2d3957;
+        box-shadow: inset 0 -1px 0 rgba(26, 44, 81, 0.12);
       }
 
-      .answer-section p {
-        margin: 9px 0 0;
+      .divider {
+        width: 1px;
+        height: 24px;
+        background: #cbd6eb;
+        margin: 0 16px;
       }
 
-      .answer-section ul {
-        margin: 10px 0 0;
-        padding-left: 19px;
-      }
-
-      .sources {
+      .examples {
         display: grid;
-        gap: 9px;
-        margin-top: 10px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        max-width: 1476px;
+        margin: 0 auto 22px;
       }
 
-      .source {
+      .example-card {
+        display: grid;
+        grid-template-columns: 72px minmax(0, 1fr);
+        align-items: center;
+        min-height: 116px;
         border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--panel);
-        padding: 12px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 19px 20px;
+        text-align: left;
+        box-shadow: 0 13px 22px rgba(7, 87, 230, 0.06);
       }
 
-      .source strong {
-        display: block;
-        font-size: 14px;
-      }
-
-      .source span {
-        display: block;
-        margin-top: 4px;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 740;
-      }
-
-      .side-stack {
+      .icon-disc {
         display: grid;
-        gap: 14px;
+        width: 70px;
+        height: 70px;
+        place-items: center;
+        border-radius: 999px;
+        background: radial-gradient(circle at 35% 30%, #f8fbff, #dfeeff);
+        color: #084fbf;
       }
 
-      .audit,
-      .method {
-        padding: 16px;
+      .icon-disc svg {
+        width: 43px;
+        height: 43px;
+        stroke-width: 1.8;
       }
 
-      .method-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
-        margin-top: 46px;
-      }
-
-      .method h2 {
-        margin: 0;
+      .example-card span {
+        color: var(--navy);
         font-size: 18px;
+        font-weight: 760;
+        line-height: 1.25;
+        padding-left: 18px;
       }
 
-      .hidden {
-        display: none;
+      .protocol {
+        max-width: 1598px;
+        margin: 0 auto 20px;
+        border: 1px solid var(--line-2);
+        border-radius: 14px;
+        background: rgba(239, 247, 255, 0.86);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        padding: 12px 18px 24px;
       }
 
-      footer {
-        border-top: 1px solid var(--line);
-        padding: 24px 0;
-        color: rgba(16, 18, 22, 0.58);
-        font-size: 14px;
+      .protocol-title {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 22px;
+        color: var(--blue);
+        font-size: 23px;
+        font-weight: 880;
+        margin-bottom: 16px;
       }
 
-      @media (max-width: 920px) {
-        .result-area,
-        .method-grid {
-          grid-template-columns: 1fr;
+      .protocol-title::before,
+      .protocol-title::after {
+        height: 1px;
+        background: #8cb7f4;
+        content: "";
+      }
+
+      .protocol-steps {
+        display: grid;
+        grid-template-columns: 1.1fr 0.4fr 1.15fr 0.4fr 1.18fr 0.4fr 1.22fr 0.4fr 1.22fr 0.4fr 1fr;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .step {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr);
+        align-items: center;
+        min-height: 78px;
+        position: relative;
+      }
+
+      .step .icon-disc {
+        width: 78px;
+        height: 78px;
+      }
+
+      .step .icon-disc svg {
+        width: 43px;
+        height: 43px;
+      }
+
+      .num {
+        position: absolute;
+        top: 0;
+        left: 126px;
+        display: grid;
+        width: 27px;
+        height: 27px;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--blue);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 900;
+      }
+
+      .step-text {
+        color: var(--navy);
+        font-size: 16px;
+        font-weight: 760;
+        line-height: 1.24;
+        padding-left: 16px;
+      }
+
+      .dots {
+        border-top: 2px dotted var(--blue);
+        opacity: 0.7;
+      }
+
+      .trust {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 1598px;
+        margin: 0 auto;
+        min-height: 92px;
+        border: 1px solid var(--line-2);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.9);
+        overflow: hidden;
+      }
+
+      .trust-item {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        align-items: center;
+        border-right: 1px solid var(--line);
+        padding: 18px 28px;
+      }
+
+      .trust-item:last-child {
+        border-right: 0;
+      }
+
+      .trust-item svg {
+        width: 52px;
+        height: 52px;
+        color: #073fa4;
+        stroke-width: 1.8;
+      }
+
+      .trust-item span {
+        color: var(--navy);
+        font-size: 18px;
+        font-weight: 690;
+      }
+
+      @media (max-width: 1280px) {
+        .shell {
+          width: min(100% - 44px, 1180px);
+        }
+
+        .nav-links {
+          gap: 28px;
+        }
+
+        .examples {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .protocol-steps {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .dots {
+          display: none;
+        }
+
+        .num {
+          left: 114px;
         }
       }
 
-      @media (max-width: 640px) {
-        .shell {
-          width: min(100% - 24px, 1120px);
+      @media (max-width: 880px) {
+        .topbar,
+        .nav {
+          height: auto;
         }
 
         .nav {
           align-items: flex-start;
           flex-direction: column;
-          padding: 14px 0;
+          padding: 18px 0;
         }
 
-        .navlinks {
+        .nav-links {
+          order: 3;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          margin-left: 0;
+        }
+
+        .nav-links a {
+          padding: 8px 0;
+        }
+
+        .nav-links a.active::after {
+          bottom: 3px;
+        }
+
+        .nav-actions {
+          width: 100%;
+        }
+
+        .search-bar {
+          grid-template-columns: 38px 1fr;
+          gap: 8px;
+          padding: 16px;
+        }
+
+        .search-button {
+          grid-column: 1 / -1;
+          width: 100%;
+        }
+
+        .keys {
           flex-wrap: wrap;
         }
 
-        .search-label,
-        .search-actions {
-          align-items: stretch;
+        .examples,
+        .protocol-steps,
+        .trust {
+          grid-template-columns: 1fr;
+        }
+
+        .trust-item {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .trust-item:last-child {
+          border-bottom: 0;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .shell {
+          width: min(100% - 24px, 1180px);
+        }
+
+        .brand {
+          font-size: 32px;
+        }
+
+        .nav-actions {
           flex-direction: column;
         }
 
-        .primary {
+        .nav-button {
           width: 100%;
+        }
+
+        h1 {
+          font-size: 42px;
+        }
+
+        .blue-line {
+          font-size: 38px;
+        }
+
+        .subhead {
+          font-size: 19px;
+        }
+
+        .example-card {
+          grid-template-columns: 62px 1fr;
+        }
+
+        .icon-disc {
+          width: 60px;
+          height: 60px;
         }
       }
     </style>
@@ -486,265 +619,243 @@
     <header class="topbar">
       <div class="shell nav">
         <a class="brand" href="/Not-GPT/" aria-label="NOT GPT home">
-          <span class="mark">N</span>
+          <svg class="logo-icon" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="27" cy="27" r="19" fill="none" stroke="currentColor" stroke-width="8" />
+            <path d="M42 42 58 58" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="8" />
+          </svg>
           <span>NOT GPT</span>
         </a>
-        <nav class="navlinks" aria-label="Primary navigation">
-          <a href="#answer">Answer</a>
-          <a href="#method">Method</a>
-          <a href="https://github.com/BeatViral/Not-GPT">Repository</a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="active" href="/Not-GPT/">Search</a>
+          <a href="#explainer">Explainer</a>
+          <a href="#protocol">Protocol</a>
+          <a href="#methodology">Methodology</a>
+          <a href="#library">Library</a>
         </nav>
+
+        <div class="nav-actions">
+          <a class="nav-button secondary" href="#signin">Sign in</a>
+          <a class="nav-button primary" href="#try">Try NOT GPT</a>
+        </div>
       </div>
     </header>
 
-    <main class="shell">
-      <section class="hero" aria-labelledby="headline">
-        <p class="eyebrow">Search that questions its sources before answering.</p>
-        <h1 id="headline">AI converts the commercially engineered internet into answers.</h1>
-        <p class="subhead">Not GPT doesn't.</p>
-        <p class="support">
-          Ask normally. NOT GPT checks source incentives, repeated claims, original evidence,
-          contradictions and uncertainty before it gives you a clean answer.
+    <main>
+      <section class="hero shell" aria-labelledby="headline">
+        <h1 id="headline">
+          AI converts the commercially engineered internet into answers.
+          <span class="blue-line">NOT GPT doesn&rsquo;t.</span>
+        </h1>
+        <p class="subhead">
+          NOT GPT questions the sources, repetition, incentives and uncertainty<br />
+          before showing you an answer.
         </p>
 
-        <form class="search-card" id="searchForm">
-          <div class="search-label">
-            <span>Ask NOT GPT</span>
-            <span class="demo-pill">Demonstration mode</span>
-          </div>
-          <label for="question" class="hidden">Question</label>
-          <textarea id="question">My child is 12 years old. Could getting braces at this age affect her facial development?</textarea>
-          <div class="search-actions">
-            <span class="hint">Enter searches. Shift + Enter adds a new line.</span>
-            <button class="primary" type="submit" id="searchButton">Search with NOT GPT</button>
+        <form class="search-wrap" id="searchForm" action="#try">
+          <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="14" cy="14" r="9" fill="none" stroke="currentColor" stroke-width="3" />
+              <path d="m21 21 7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3" />
+            </svg>
+            <label class="sr-only" for="question">Ask something important</label>
+            <input id="question" class="question" type="text" placeholder="Ask something important..." />
+            <button class="search-button" type="submit">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <circle cx="14" cy="14" r="9" fill="none" stroke="currentColor" stroke-width="3" />
+                <path d="m21 21 7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3" />
+              </svg>
+              Search with NOT GPT
+            </button>
           </div>
         </form>
 
+        <div class="keys" aria-label="Keyboard instructions">
+          <span class="key">Enter</span>
+          <span>Press Enter to search</span>
+          <span class="divider"></span>
+          <span class="key">Shift + Enter</span>
+          <span>for new line</span>
+        </div>
+
         <div class="examples" aria-label="Example questions">
-          <button class="example" type="button">Are these websites repeating one original claim?</button>
-          <button class="example" type="button">Does this supplement claim have independent evidence?</button>
-          <button class="example" type="button">What evidence contradicts the dominant position?</button>
+          <button class="example-card" type="button">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M15 13c-4 0-7 4-6 9l3 16c.5 3 5 3 5.5 0l1-7c.6-4 10.4-4 11 0l1 7c.5 3 5 3 5.5 0l3-16c1-5-2-9-6-9-3 0-5 2-9 2s-6-2-9-2Z" fill="none" stroke="currentColor" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span>Could braces during childhood affect facial development?</span>
+          </button>
+
+          <button class="example-card" type="button">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <rect x="10" y="22" width="28" height="12" rx="6" transform="rotate(-45 24 28)" fill="none" stroke="currentColor" />
+                <path d="M20 16 32 28" fill="none" stroke="currentColor" />
+              </svg>
+            </span>
+            <span>Is this supplement claim supported by independent evidence?</span>
+          </button>
+
+          <button class="example-card" type="button">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M24 16c6-5 15 0 13 11-1 8-6 14-13 14S12 35 11 27c-2-11 7-16 13-11Z" fill="none" stroke="currentColor" />
+                <path d="M24 16c0-5 2-8 7-9M21 10c-3-1-6-1-9 1" fill="none" stroke="currentColor" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span>Is this nutrition claim based on human studies?</span>
+          </button>
+
+          <button class="example-card" type="button">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="16" fill="none" stroke="currentColor" />
+                <path d="M8 24h32M24 8c6 5 8 27 0 32M24 8c-6 5-8 27 0 32" fill="none" stroke="currentColor" />
+              </svg>
+            </span>
+            <span>Are these websites repeating one original claim?</span>
+          </button>
         </div>
       </section>
 
-      <section class="result-area" aria-label="Search result">
-        <div class="answer" id="answer">
-          <div class="answer-header">
-            <span class="demo-pill">Illustrative demonstration data</span>
-            <h2>Clean answer</h2>
-          </div>
-          <div class="answer-body" id="answerBody">
-            <div class="notice" id="placeholder">
-              Run the demonstration search. The answer will appear here after NOT GPT completes the evidence
-              protocol.
-            </div>
-          </div>
+      <section class="protocol" id="protocol" aria-labelledby="protocol-title">
+        <div class="protocol-title" id="protocol-title">
+          <span>Every answer passes our evidence protocol</span>
         </div>
 
-        <aside class="side-stack">
-          <div class="progress" aria-live="polite">
-            <h2 class="panel-title">Evidence protocol</h2>
-            <ol class="progress-list" id="stages">
-              <li class="stage">Understanding your question</li>
-              <li class="stage">Finding original evidence</li>
-              <li class="stage">Checking repeated claims</li>
-              <li class="stage">Examining source incentives</li>
-              <li class="stage">Looking for credible contradictions</li>
-              <li class="stage">Identifying uncertainty</li>
-              <li class="stage">Building your answer</li>
-            </ol>
+        <div class="protocol-steps">
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M13 8h16l7 7v25H13Z" fill="none" stroke="currentColor" />
+                <path d="M29 8v8h8M18 20h10M18 27h7" fill="none" stroke="currentColor" stroke-linecap="round" />
+                <circle cx="31" cy="31" r="6" fill="none" stroke="currentColor" />
+                <path d="m36 36 5 5" fill="none" stroke="currentColor" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="num">1</span>
+            <span class="step-text">Find original evidence</span>
           </div>
-
-          <div class="audit">
-            <h2 class="panel-title">Answer ingredients</h2>
-            <p>
-              Primary evidence, systematic review, professional guidance, commercial source checked,
-              repetition collapsed.
-            </p>
+          <span class="dots"></span>
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M15 9h16l6 6v24H15Z" fill="none" stroke="currentColor" />
+                <path d="M31 9v7h7M11 15h16l6 6v18H11Z" fill="none" stroke="currentColor" />
+                <path d="M16 26h11M16 32h8" fill="none" stroke="currentColor" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="num">2</span>
+            <span class="step-text">Remove repeated claims</span>
           </div>
-        </aside>
+          <span class="dots"></span>
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="22" cy="16" r="7" fill="none" stroke="currentColor" />
+                <path d="M10 38c2-8 8-12 16-12 3 0 5 .5 7 1.5" fill="none" stroke="currentColor" stroke-linecap="round" />
+                <circle cx="34" cy="34" r="7" fill="none" stroke="currentColor" />
+                <path d="M34 30v8M31 33h6" fill="none" stroke="currentColor" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="num">3</span>
+            <span class="step-text">Check source incentives</span>
+          </div>
+          <span class="dots"></span>
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M12 18h24M30 12l6 6-6 6M36 30H12M18 24l-6 6 6 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="num">4</span>
+            <span class="step-text">Look for credible contradictions</span>
+          </div>
+          <span class="dots"></span>
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" />
+                <path d="M19 19a6 6 0 1 1 8 6c-2 1-3 3-3 5M24 36h.1" fill="none" stroke="currentColor" stroke-linecap="round" />
+              </svg>
+            </span>
+            <span class="num">5</span>
+            <span class="step-text">Identify material uncertainty</span>
+          </div>
+          <span class="dots"></span>
+          <div class="step">
+            <span class="icon-disc">
+              <svg viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M24 7 38 13v11c0 9-5 15-14 18-9-3-14-9-14-18V13Z" fill="none" stroke="currentColor" stroke-linejoin="round" />
+                <path d="m17 25 5 5 10-11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="num">6</span>
+            <span class="step-text">Build your answer</span>
+          </div>
+        </div>
       </section>
 
-      <section class="method-grid" id="method" aria-label="Method">
-        <article class="method">
-          <h2>Visibility is not authority.</h2>
-          <p>NOT GPT does not treat the most visible pages as the strongest evidence.</p>
-        </article>
-        <article class="method">
-          <h2>Repetition is not proof.</h2>
-          <p>Twenty pages repeating one claim are not twenty independent pieces of evidence.</p>
-        </article>
-        <article class="method">
-          <h2>GOO stays separate.</h2>
-          <p>GOO opportunities never enter NOT GPT answers, rankings, citations or prompts.</p>
-        </article>
+      <section class="trust" id="methodology" aria-label="NOT GPT principles">
+        <div class="trust-item">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 6 38 12v11c0 9-5 16-14 19-9-3-14-10-14-19V12Z" fill="none" stroke="currentColor" stroke-linejoin="round" />
+          </svg>
+          <span>Evidence over visibility</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M14 6h15l7 7v29H14Z" fill="none" stroke="currentColor" />
+            <path d="M29 6v8h8M19 22h13M19 29h13M19 36h8" fill="none" stroke="currentColor" stroke-linecap="round" />
+          </svg>
+          <span>Sources, not summaries</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" />
+            <path d="M12 12 36 36" fill="none" stroke="currentColor" stroke-linecap="round" />
+          </svg>
+          <span>No ads. No influence.</span>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" />
+            <path d="M19 19a6 6 0 1 1 8 6c-2 1-3 3-3 5M24 36h.1" fill="none" stroke="currentColor" stroke-linecap="round" />
+          </svg>
+          <span>Open about uncertainty</span>
+        </div>
       </section>
     </main>
 
-    <footer>
-      <div class="shell">
-        This GitHub Pages version is a static demonstration search page. The full Next.js app with API routes,
-        provider architecture, Supabase schema and tests is in the
-        <a href="https://github.com/BeatViral/Not-GPT">BeatViral/Not-GPT repository</a>.
-      </div>
-    </footer>
-
     <script>
       const form = document.getElementById("searchForm");
-      const question = document.getElementById("question");
-      const button = document.getElementById("searchButton");
-      const answerBody = document.getElementById("answerBody");
-      const stages = [...document.querySelectorAll(".stage")];
-      const examples = document.querySelectorAll(".example");
+      const input = document.getElementById("question");
+      const examples = document.querySelectorAll(".example-card");
 
-      const demoAnswers = {
-        braces: {
-          direct:
-            "In this demonstration answer, braces at age 12 can affect tooth position and bite relationships, but this demo evidence does not support a confident claim that routine braces reliably harm long-term facial development.",
-          confident: [
-            "The strongest support is for changes in tooth alignment and bite relationships.",
-            "Some commercial pages broaden narrower timing guidance into stronger claims about guiding facial growth.",
-            "Personal reports are worth noticing as concerns, but they do not establish causation."
-          ],
-          uncertain: [
-            "Treatment details matter: extraction, expansion, appliance type and growth stage can change the answer.",
-            "Long-term facial-development outcomes are less directly measured than ordinary dental outcomes."
-          ],
-          sources: [
-            ["Illustrative Child Growth and Orthodontic Outcomes Registry", "Observational study"],
-            ["Illustrative Review of Orthodontics and Facial Growth Endpoints", "Systematic review"],
-            ["Illustrative Pediatric Orthodontic Timing Guidance", "Professional guidance"],
-            ["Illustrative Clinic Page About Early Smile Growth", "Commercial source checked"]
-          ]
-        },
-        repeat: {
-          direct:
-            "NOT GPT would trace whether the visible pages are independent evidence or the same claim repeated through one source, one citation chain or one ownership group.",
-          confident: [
-            "Repeated wording is not counted as independent proof.",
-            "Original evidence gets separated from summaries and commercial explainers."
-          ],
-          uncertain: [
-            "Some source ownership or citation relationships may remain unknown.",
-            "A claim can be widely repeated and still be true; repetition alone does not settle it."
-          ],
-          sources: [
-            ["Original evidence source", "Primary evidence"],
-            ["Repeated article cluster", "Repetition checked"],
-            ["Citation chain map", "Lineage audit"]
-          ]
-        },
-        supplement: {
-          direct:
-            "NOT GPT would separate human evidence from mechanism claims, commercial claims, affiliate incentives and unresolved safety questions before answering.",
-          confident: [
-            "Human outcome evidence matters more than generic biological plausibility.",
-            "Affiliate and commercial incentives should be visible without automatically condemning the source."
-          ],
-          uncertain: [
-            "Dose, population, interactions and publication bias may materially affect the answer.",
-            "Short-term marker changes may not prove durable real-world benefit."
-          ],
-          sources: [
-            ["Human outcome study", "Primary evidence"],
-            ["Safety review", "Systematic review"],
-            ["Affiliate review page", "Incentive checked"]
-          ]
-        },
-        contradict: {
-          direct:
-            "NOT GPT would actively seek credible negative findings, methodological criticism and alternative interpretations, then weight them by quality and relevance.",
-          confident: [
-            "Contradiction is not automatically truth.",
-            "A dominant conclusion can be correct, but it still has to earn that position."
-          ],
-          uncertain: [
-            "Some dissent may be low quality or irrelevant.",
-            "Evidence may test a narrower question than the user actually asked."
-          ],
-          sources: [
-            ["Negative finding", "Contradiction"],
-            ["Methods critique", "Applicability check"],
-            ["Dominant guideline", "Professional guidance"]
-          ]
-        }
-      };
-
-      function classifyQuestion(value) {
-        const text = value.toLowerCase();
-        if (text.includes("repeating") || text.includes("original claim")) return "repeat";
-        if (text.includes("supplement")) return "supplement";
-        if (text.includes("contradict")) return "contradict";
-        return "braces";
-      }
-
-      function renderAnswer(answer) {
-        answerBody.innerHTML = `
-          <section class="answer-section">
-            <h3>Direct answer</h3>
-            <p>${answer.direct}</p>
-          </section>
-          <section class="answer-section">
-            <h3>What we can say confidently</h3>
-            <ul>${answer.confident.map((item) => `<li>${item}</li>`).join("")}</ul>
-          </section>
-          <section class="answer-section">
-            <h3>What remains uncertain</h3>
-            <ul>${answer.uncertain.map((item) => `<li>${item}</li>`).join("")}</ul>
-          </section>
-          <section class="answer-section">
-            <h3>Sources</h3>
-            <div class="sources">
-              ${answer.sources
-                .map(([title, type]) => `<div class="source"><strong>${title}</strong><span>${type}</span></div>`)
-                .join("")}
-            </div>
-          </section>
-        `;
-      }
-
-      function resetStages() {
-        stages.forEach((stage) => stage.classList.remove("done"));
-      }
-
-      function runSearch() {
-        const selected = demoAnswers[classifyQuestion(question.value)];
-        button.disabled = true;
-        button.textContent = "Searching...";
-        answerBody.innerHTML =
-          '<div class="notice">Running the demonstration evidence protocol. No live internet research is being claimed on GitHub Pages.</div>';
-        resetStages();
-
-        stages.forEach((stage, index) => {
-          window.setTimeout(() => {
-            stage.classList.add("done");
-            if (index === stages.length - 1) {
-              renderAnswer(selected);
-              button.disabled = false;
-              button.textContent = "Search with NOT GPT";
-              document.getElementById("answer").scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          }, 180 + index * 190);
-        });
+      function fillQuestion(text) {
+        input.value = text.trim();
+        input.focus();
       }
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        runSearch();
+        const button = form.querySelector(".search-button");
+        button.textContent = "Demo search ready";
+        window.setTimeout(() => {
+          button.innerHTML = `
+            <svg viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="14" cy="14" r="9" fill="none" stroke="currentColor" stroke-width="3"></circle>
+              <path d="m21 21 7 7" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="3"></path>
+            </svg>
+            Search with NOT GPT
+          `;
+        }, 1400);
       });
 
-      question.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" && !event.shiftKey) {
-          event.preventDefault();
-          runSearch();
-        }
-      });
-
-      examples.forEach((example) => {
-        example.addEventListener("click", () => {
-          question.value = example.textContent;
-          runSearch();
-        });
+      examples.forEach((card) => {
+        card.addEventListener("click", () => fillQuestion(card.innerText));
       });
     </script>
   </body>
