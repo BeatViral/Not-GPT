@@ -1,0 +1,1132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>What NOT GPT | NOT GPT</title>
+    <meta
+      name="description"
+      content="The hidden flaw in AI answers and why NOT GPT questions sources before answering."
+    />
+    <style>
+      :root {
+        --blue: #0757e6;
+        --navy: #07143d;
+        --text: #162242;
+        --muted: #667089;
+        --line: #c8d8f7;
+        --soft: #edf5ff;
+        --paper: #ffffff;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--navy);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Arial, sans-serif;
+        background:
+          radial-gradient(circle at 50% 0, #ffffff 0, #ffffff 32%, #f7fbff 67%, #eef6ff 100%);
+      }
+
+      body::before,
+      body::after {
+        position: fixed;
+        top: 140px;
+        z-index: -1;
+        width: 560px;
+        height: 420px;
+        content: "";
+        opacity: 0.45;
+        background-image: repeating-radial-gradient(
+          ellipse at center,
+          transparent 0 15px,
+          rgba(6, 90, 230, 0.16) 16px 17px,
+          transparent 18px 31px
+        );
+        pointer-events: none;
+      }
+
+      body::before {
+        left: -285px;
+        transform: rotate(13deg);
+      }
+
+      body::after {
+        right: -245px;
+        transform: rotate(-10deg);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        width: min(1540px, calc(100% - 96px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        border-bottom: 1px solid #d6e1f4;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 88px;
+        gap: 32px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 13px;
+        color: var(--navy);
+        font-size: 39px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+      }
+
+      .logo-icon {
+        width: 55px;
+        height: 55px;
+        color: var(--blue);
+        flex: 0 0 auto;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        gap: clamp(28px, 3vw, 54px);
+        margin-left: 28px;
+        color: var(--navy);
+        font-size: 20px;
+        font-weight: 650;
+      }
+
+      .nav-links a {
+        position: relative;
+        padding: 32px 0 29px;
+      }
+
+      .nav-links a.active {
+        color: var(--blue);
+        font-weight: 800;
+      }
+
+      .nav-links a.active::after {
+        position: absolute;
+        left: -2px;
+        right: -2px;
+        bottom: 20px;
+        height: 3px;
+        border-radius: 999px;
+        background: var(--blue);
+        content: "";
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .nav-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 54px;
+        border-radius: 9px;
+        padding: 0 28px;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .nav-button.secondary {
+        border: 1.5px solid #6c7898;
+        background: #fff;
+        color: var(--navy);
+      }
+
+      .nav-button.primary {
+        border: 1.5px solid var(--blue);
+        background: var(--blue);
+        color: #fff;
+        box-shadow: 0 9px 18px rgba(7, 87, 230, 0.18);
+      }
+
+      main {
+        padding: 54px 0 80px;
+      }
+
+      .hero {
+        max-width: 1050px;
+        margin: 0 auto 34px;
+        text-align: center;
+      }
+
+      .eyebrow {
+        margin: 0 0 16px;
+        color: var(--blue);
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--navy);
+        font-size: clamp(44px, 6vw, 82px);
+        font-weight: 930;
+        line-height: 1;
+        letter-spacing: -0.055em;
+      }
+
+      .hero p {
+        max-width: 820px;
+        margin: 18px auto 0;
+        color: #303a56;
+        font-size: 23px;
+        line-height: 1.38;
+      }
+
+      .article-wrap {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 920px);
+        gap: 34px;
+        align-items: start;
+        justify-content: center;
+      }
+
+      .toc {
+        position: sticky;
+        top: 20px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.88);
+        padding: 18px;
+      }
+
+      .toc h2 {
+        margin: 0 0 12px;
+        font-size: 16px;
+      }
+
+      .toc a {
+        display: block;
+        border-top: 1px solid #e3ecfb;
+        padding: 10px 0;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .toc a:hover {
+        color: var(--blue);
+      }
+
+      article {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.94);
+        box-shadow: 0 18px 38px rgba(7, 87, 230, 0.07);
+        padding: clamp(24px, 4vw, 52px);
+      }
+
+      article h1 {
+        margin: 0 0 18px;
+        font-size: clamp(34px, 4vw, 54px);
+        line-height: 1.04;
+      }
+
+      article h2 {
+        margin: 42px 0 12px;
+        color: var(--navy);
+        font-size: clamp(26px, 3vw, 38px);
+        line-height: 1.12;
+        letter-spacing: -0.035em;
+      }
+
+      article p,
+      article li {
+        color: var(--text);
+        font-size: 18px;
+        line-height: 1.72;
+      }
+
+      article p {
+        margin: 14px 0 0;
+      }
+
+      article ul,
+      article ol {
+        margin: 14px 0 0;
+        padding-left: 25px;
+      }
+
+      article blockquote {
+        margin: 20px 0;
+        border-left: 4px solid var(--blue);
+        border-radius: 0 10px 10px 0;
+        background: var(--soft);
+        padding: 16px 20px;
+        color: var(--navy);
+        font-size: 20px;
+        font-weight: 780;
+        line-height: 1.45;
+      }
+
+      .article-callout {
+        margin: 30px 0;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: linear-gradient(180deg, #f7fbff, #edf5ff);
+        padding: 22px;
+      }
+
+      .article-callout strong {
+        display: block;
+        color: var(--blue);
+        font-size: 22px;
+      }
+
+      footer {
+        border-top: 1px solid #d6e1f4;
+        padding: 28px 0;
+        color: var(--muted);
+        font-size: 14px;
+        text-align: center;
+      }
+
+      @media (max-width: 1080px) {
+        .shell {
+          width: min(100% - 36px, 1180px);
+        }
+
+        .article-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .toc {
+          position: static;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 18px 0;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          margin-left: 0;
+        }
+
+        .nav-actions {
+          width: 100%;
+          flex-direction: column;
+        }
+
+        .nav-button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .shell {
+          width: min(100% - 24px, 1180px);
+        }
+
+        .brand {
+          font-size: 32px;
+        }
+
+        article p,
+        article li {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell nav">
+        <a class="brand" href="/Not-GPT/" aria-label="NOT GPT home">
+          <svg class="logo-icon" viewBox="0 0 64 64" aria-hidden="true">
+            <circle cx="27" cy="27" r="19" fill="none" stroke="currentColor" stroke-width="8" />
+            <path d="M42 42 58 58" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="8" />
+          </svg>
+          <span>NOT GPT</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="/Not-GPT/">Search</a>
+          <a class="active" href="/Not-GPT/what-not-gpt.html">What NOT GPT</a>
+          <a href="/Not-GPT/#protocol">Protocol</a>
+          <a href="/Not-GPT/#methodology">Methodology</a>
+          <a href="/Not-GPT/#library">Library</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a class="nav-button secondary" href="#signin">Sign in</a>
+          <a class="nav-button primary" href="/Not-GPT/">Try NOT GPT</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">What NOT GPT</p>
+        <h1>The hidden flaw in AI answers</h1>
+        <p>
+          AI converts the commercially engineered internet into answers. NOT GPT exists because an
+          answer should question its ingredients before it becomes knowledge.
+        </p>
+      </section>
+
+      <div class="article-wrap">
+        <aside class="toc" aria-label="Page contents">
+          <h2>Contents</h2>
+          <a href="#ai-removed-the-advertisement-but-kept-the-advertisers-answer">AI removed the advertisement</a>
+          <a href="#current-ai-can-accurately-summarise-a-distorted-information-environment">Distorted environments</a>
+          <a href="#the-authority-laundering-process">Authority laundering</a>
+          <a href="#the-braces-example">The braces example</a>
+          <a href="#ten-citations-may-still-be-one-claim">Ten citations, one claim</a>
+          <a href="#inherited-information-bias">Inherited information bias</a>
+          <a href="#every-answer-should-have-an-ingredient-label">Ingredient labels</a>
+          <a href="#what-a-better-system-must-do">What better search must do</a>
+        </aside>
+
+        <article id="article"></article>
+      </div>
+    </main>
+
+    <footer>
+      <div class="shell">
+        NOT GPT is a search product. This explainer is a separate page so it does not interrupt the search experience.
+      </div>
+    </footer>
+
+    <script type="text/plain" id="article-source">
+# THE HIDDEN FLAW IN AI ANSWERS
+
+## AI converts the commercially engineered internet into answers.
+
+The internet was not created as a neutral library of human knowledge.
+
+Much of what appears online was created to build economies around products, treatments, services, industries and organisations.
+
+Businesses spent years--and often enormous amounts of money--building websites, publishing articles, funding studies, employing public-relations companies, hiring search-engine specialists and manufacturing apparent credibility.
+
+These websites were not necessarily created primarily to educate humanity.
+
+They were created to:
+
+* sell products,
+* sell treatments,
+* attract customers,
+* defend industries,
+* influence public opinion,
+* generate advertising revenue,
+* earn affiliate commissions,
+* establish professional authority,
+* and dominate search results.
+
+In many cases, the website itself was simply an enormous advertisement disguised as information.
+
+Then Google arrived.
+
+The organisations with the greatest marketing budgets, strongest search-engine optimisation, largest publishing operations and most established reputations became the most visible sources.
+
+Visibility became associated with authority.
+
+A company could publish hundreds or thousands of carefully optimised articles supporting the category in which it made money.
+
+Professional associations could publish guidance supporting the practices of their members.
+
+Clinics could create educational pages explaining why the treatments they sold were necessary, safe and beneficial.
+
+Manufacturers could fund research, educational materials and industry narratives around their products.
+
+Publishers could repeatedly reproduce commercially useful conclusions because those conclusions attracted readers, advertising and search traffic.
+
+Over time, the internet became saturated with polished, authoritative-looking material shaped by commercial, professional and institutional incentives.
+
+Then AI arrived.
+
+AI systems began retrieving, processing and summarising this commercially engineered internet.
+
+Suddenly, the same websites that had previously been understood as businesses, marketing properties, clinics, manufacturers, professional bodies and advertising-supported publishers were being absorbed into AI answers as apparent authorities.
+
+The internet's marketing layer was promoted into AI's knowledge layer.
+
+That is the structural problem.
+
+## AI removed the advertisement--but kept the advertiser's answer.
+
+With an ordinary search engine, the commercial structure was still partially visible.
+
+A user could see:
+
+* an orthodontic clinic,
+* a manufacturer,
+* a sponsored listing,
+* an affiliate website,
+* a professional association,
+* a commercial health publisher,
+* or a company selling the treatment being discussed.
+
+The user could at least recognise that the source might have an interest in the conclusion.
+
+AI changes this experience.
+
+It can retrieve statements from all of those sources, remove the branding, remove the banners, remove the sales language and melt their conclusions into one calm, apparently neutral paragraph:
+
+> "Research generally suggests..."
+
+The advertisement disappears.
+
+The advertiser's preferred answer remains.
+
+The commercial worldview survives inside the answer, but the commercial source becomes almost invisible.
+
+That makes the resulting answer feel more objective than the webpages from which it was constructed.
+
+The user no longer experiences the answer as marketing, interpretation or industry positioning.
+
+The user experiences it as knowledge.
+
+## Current AI can accurately summarise a distorted information environment.
+
+The problem is not limited to hallucination.
+
+Hallucination is when an AI system invents information that is not supported by its sources.
+
+But there is another, quieter and potentially much larger failure.
+
+An AI system can faithfully and accurately summarise its sources--and still produce a misleading or distorted answer because the information environment itself was commercially engineered.
+
+The AI does not need to invent anything.
+
+It may quote real publications.
+
+It may cite real webpages.
+
+It may accurately reproduce professional guidance.
+
+It may provide several apparently reputable citations.
+
+And the final answer may still be structurally biased because the source landscape was shaped by parties with aligned commercial, professional or institutional incentives.
+
+The model may not be lying.
+
+It may be faithfully repeating a world designed to sell to you.
+
+That is why the problem is more serious than occasional factual mistakes.
+
+The AI may be operating correctly while the information supply chain underneath it is distorted.
+
+## The authority-laundering process
+
+The process can be expressed simply:
+
+> Money and incentives create content.
+> Content creates visibility.
+> Visibility creates perceived authority.
+> AI converts perceived authority into answers.
+> The user experiences the answer as neutral knowledge.
+
+Marketing creates visibility.
+
+Visibility becomes search authority.
+
+Search authority becomes AI evidence.
+
+AI wording makes the result sound like established human knowledge.
+
+This is a form of authority laundering.
+
+The original commercial motivation becomes increasingly difficult to see as the claim travels through:
+
+* company content,
+* industry publications,
+* professional guidance,
+* search rankings,
+* secondary summaries,
+* and finally an AI-generated answer.
+
+By the time the conclusion reaches the user, the economic and institutional forces that shaped it may have completely disappeared from view.
+
+## The braces example
+
+Consider the question:
+
+> "My child is 12 years old. Could getting braces at this age affect her facial development?"
+
+A normal AI search may retrieve information from:
+
+* orthodontic clinics selling braces,
+* dental chains,
+* aligner companies,
+* professional orthodontic associations,
+* commercial health publishers,
+* treatment providers,
+* educational pages funded by the industry,
+* and articles repeating professional guidelines.
+
+It may then generate a reassuring answer such as:
+
+> "Braces are commonly recommended around this age and generally do not negatively affect facial development."
+
+But the answer the parent actually needs requires much deeper questions:
+
+* Was long-term facial development directly measured?
+* Was skeletal growth measured?
+* Were untreated children used as a control group?
+* Were children followed into adulthood?
+* Were extraction and non-extraction treatments analysed separately?
+* Were different orthodontic techniques separated?
+* Was airway development assessed?
+* Were facial outcomes measured objectively?
+* Were the outcomes selected because they were convenient rather than because they matched the parent's concern?
+* Who funded the research?
+* Were negative findings published?
+* Were harms actively measured or merely not reported?
+* Are twenty websites relying on the same two or three studies?
+* Are professional organisations citing their own previous guidelines?
+* What evidence contradicts the dominant position?
+* What remains genuinely unknown?
+
+An answer can be technically defensible while still failing to answer the question the parent actually asked.
+
+For example, evidence showing that braces improve dental alignment is not automatically evidence about long-term facial development.
+
+Evidence about short-term tooth movement is not automatically evidence about adult skeletal outcomes.
+
+An absence of reported harm is not proof that the relevant harm was properly measured.
+
+The research may be answering a different question.
+
+## Evidence is not the same as advertising
+
+Current AI systems often fail to distinguish clearly between:
+
+* evidence and advertising,
+* original research and interpretation,
+* independent research and commercially aligned research,
+* scientific consensus and internet repetition,
+* a source's prestige and the relevance of its evidence,
+* what is strongly demonstrated and what is merely accepted,
+* what is known and what has not been studied,
+* and what experts agree about versus what an industry repeatedly says.
+
+A polished website is not necessarily a strong source.
+
+A recognised organisation is not automatically independent.
+
+A professional association may contain genuine expertise while also representing the professional and economic interests of its members.
+
+A manufacturer-funded study may contain useful evidence while still requiring careful scrutiny.
+
+A university affiliation does not automatically make a claim correct.
+
+A minority opinion is not automatically suppressed truth.
+
+The purpose is not to reverse authority and assume that dominant sources are wrong.
+
+The purpose is to stop granting automatic authority based on visibility, polish, reputation or repetition.
+
+Authority must earn its position through evidence.
+
+## Ten citations may still be one claim.
+
+Citations do not automatically solve the problem.
+
+An AI answer may contain ten citations, but those ten citations may represent:
+
+* ten clinics selling the same treatment,
+* ten articles repeating one professional guideline,
+* ten websites referencing the same original study,
+* several domains owned by the same organisation,
+* several publishers copying the same secondary summary,
+* a circular citation chain,
+* or claims repeated so frequently that they begin to appear proven.
+
+Twenty pages do not necessarily represent twenty independent pieces of evidence.
+
+They may represent one claim travelling through twenty webpages.
+
+Repetition is not proof.
+
+Internet consensus is not necessarily scientific consensus.
+
+The system must collapse duplicated claims and trace them toward their original evidence.
+
+It must ask:
+
+> Where did this claim actually begin?
+
+> How many genuinely independent evidence origins support it?
+
+> Did later sources strengthen the claim beyond what the original evidence justified?
+
+> Are the sources citing primary research, or are they simply citing one another?
+
+Without this process, AI can confuse information volume with evidence strength.
+
+## Provenance collapse
+
+Once information enters an AI-generated paragraph, the user often loses sight of its provenance.
+
+The user cannot easily see:
+
+* who originally made the claim,
+* who funded the evidence,
+* what the source sells,
+* whether the source is independent,
+* how many times the claim has been copied,
+* what the original study actually measured,
+* what limitations were reported,
+* what contradictory findings exist,
+* and what remains unknown.
+
+All of those distinctions collapse into one smooth answer.
+
+This is provenance collapse.
+
+The more fluent and confident the answer sounds, the easier it becomes for users to forget that it was constructed from a specific information supply chain.
+
+The answer may sound universal while being built from a narrow group of commercially or professionally aligned sources.
+
+## Inherited information bias
+
+This creates a new failure category:
+
+# Inherited information bias
+
+Inherited information bias occurs when an AI system inherits the economic, professional and institutional incentives of its information environment and presents the resulting position without making those incentives visible.
+
+This is different from ordinary misinformation.
+
+It is different from a deliberate lie.
+
+It is different from simple advertising.
+
+It is different from hallucination.
+
+The AI may accurately transmit the bias it inherited.
+
+The source may contain real facts.
+
+The conclusion may even be partly or substantially correct.
+
+But the user is not shown how the answer was shaped, which alternatives were excluded, what assumptions were inherited or which uncertainties were compressed.
+
+The system reproduces the source environment's priorities without making those priorities inspectable.
+
+## The food analogy
+
+AI appears to be creating every possible kind of intellectual food:
+
+* medicine,
+* parenting advice,
+* financial guidance,
+* nutrition,
+* psychology,
+* history,
+* education,
+* law,
+* consumer advice,
+* and scientific explanations.
+
+The dishes all look different.
+
+One looks like pasta.
+
+One looks like biryani.
+
+One looks like medical advice.
+
+One looks like a financial answer.
+
+But underneath, they may repeatedly be made from the same industrial ingredients:
+
+* SEO content,
+* company-funded explanations,
+* industry-approved claims,
+* commercial publishers,
+* affiliate articles,
+* copied summaries,
+* public-relations narratives,
+* highly marketed positions,
+* and professionally aligned sources.
+
+It is as though we are creating every kind of food while repeatedly using ingredients supplied by McDonald's.
+
+The dishes changed.
+
+The supplier did not.
+
+AI promises the whole cuisine of human knowledge, but may cook with ingredients supplied by whoever dominated the internet.
+
+That is why answers across completely different subjects can feel strangely uniform, polished, reassuring and institutionally safe.
+
+The recipe changes.
+
+The information supply chain often does not.
+
+## Every answer should have an ingredient label.
+
+People would hesitate to feed their children food without knowing its ingredients.
+
+Yet children and adults are increasingly being fed AI-generated knowledge without being shown the ingredients of the answer.
+
+Every serious AI answer should effectively carry an information ingredient label.
+
+It should show:
+
+* how many sources were reviewed,
+* how many were primary research,
+* how many were secondary summaries,
+* how many sold the relevant product or service,
+* how many represented professional organisations,
+* how many were government or academic sources,
+* how many claims were repeated,
+* how many independent evidence origins existed,
+* what funding was disclosed,
+* what commercial concentration surrounded the answer,
+* what contradictory evidence was found,
+* what outcomes were actually measured,
+* and what important evidence was missing.
+
+For example:
+
+> Main ingredients: treatment-provider websites, professional associations, primary research and secondary health publishers.
+
+> Commercial concentration: high.
+
+> Original evidence: limited.
+
+> Repeated claims: fourteen webpages tracing to three underlying sources.
+
+> Long-term evidence: incomplete.
+
+> Missing ingredient: independent evidence directly measuring the outcome the user asked about.
+
+This would not automatically invalidate the answer.
+
+It would allow the user to see how the answer was made.
+
+## The invisible questions
+
+A trustworthy AI should not only ask:
+
+> "What does the internet say?"
+
+It must also ask:
+
+> "Why does the internet say it?"
+
+That second question is largely absent from current AI search.
+
+A proper answer system should investigate:
+
+* Who created this claim?
+* What do they sell?
+* Who benefits if the claim is believed?
+* What original evidence supports it?
+* Was the source independent?
+* Was the research funded by an interested party?
+* Are multiple sources genuinely independent?
+* Are they repeating the same evidence?
+* What contradictory findings exist?
+* Were the relevant outcomes directly measured?
+* What questions were never investigated?
+* What evidence would be needed to answer more confidently?
+* What is genuinely known?
+* What is only widely repeated?
+* What is disputed?
+* What remains unknown?
+
+The most valuable feature may not be answering more questions.
+
+It may be identifying the questions that the existing evidence failed to ask.
+
+## Children and blind trust
+
+This problem becomes especially serious when children grow up treating AI as an unquestionable teacher.
+
+People may assume that AI has examined all human knowledge and reached a neutral conclusion.
+
+But the actual process may be closer to:
+
+> The system synthesised the sources that were easiest to retrieve, most heavily produced, most widely cited and most visible online.
+
+Children should not merely be taught to accept a confident answer.
+
+They should be protected by systems that internally examine:
+
+* who produced the information,
+* what incentives shaped it,
+* whether the evidence is original,
+* whether the sources are independent,
+* whether the claims are duplicated,
+* whether credible disagreement exists,
+* and whether the question has actually been answered.
+
+This is epistemic protection.
+
+It is protection against confusing confidence with truth, visibility with authority and repetition with evidence.
+
+The mission should be:
+
+# Teach AI to investigate an answer before teaching it to a child.
+
+## Recognition itself is important
+
+The first breakthrough is recognising that this problem exists.
+
+Most public discussion focuses on whether AI hallucinates.
+
+Far less attention is given to the possibility that AI may accurately reproduce an economically and institutionally engineered worldview.
+
+People are currently placing enormous trust in AI-generated answers because the answers sound neutral, fluent and complete.
+
+Recognising inherited information bias changes that relationship.
+
+It allows people to ask:
+
+> Where did this answer come from?
+
+> What system manufactured the apparent consensus?
+
+> What incentives shaped the information supply?
+
+> What is the difference between what is visible and what is true?
+
+Once the distortion has a name and a visible structure, it can be investigated.
+
+The user is no longer forced to blindly trust a polished paragraph.
+
+## What a better system must do
+
+A better search system should not burden the ordinary user with a giant research dashboard every time they ask a question.
+
+The public experience can remain simple:
+
+> Query in. Answer out.
+
+But before producing the answer, the system should invisibly run a stronger protocol.
+
+It should:
+
+1. Understand the exact question being asked.
+2. Identify the real decision and outcome behind the wording.
+3. Search beyond the dominant online position.
+4. Prioritise original research and primary evidence.
+5. Separate primary evidence from commentary and marketing.
+6. classify source type separately from source incentive.
+7. Detect copied, duplicated and circular claims.
+8. Trace important claims toward their original source.
+9. Identify shared ownership and aligned commercial interests.
+10. Compare what the evidence measured with what the user actually asked.
+11. Search actively for credible contradictions and negative findings.
+12. Examine funding and conflicts of interest.
+13. Identify missing populations, missing outcomes and inadequate follow-up.
+14. Distinguish consensus from repetition.
+15. Construct meaningful uncertainty.
+16. Produce a clear, useful final answer.
+17. Make the deeper audit available to users who want to inspect it.
+
+The final response should separate:
+
+## What the evidence supports
+
+The conclusions backed by relevant and meaningful evidence.
+
+## What is widely repeated
+
+Claims that dominate online discussion but may originate from limited evidence.
+
+## What may be commercially amplified
+
+Claims disproportionately distributed by parties that benefit from them.
+
+## What credible disagreement remains
+
+Real areas of scientific, factual or professional dispute.
+
+## What remains unknown
+
+Questions the current evidence cannot confidently answer.
+
+This is not about replacing one dogma with another.
+
+It is about making the answer's supply chain visible and refusing to manufacture certainty where certainty does not exist.
+
+## The new search model
+
+Traditional search asks:
+
+> Which webpages are most relevant?
+
+AI search asks:
+
+> What answer can be synthesised from those webpages?
+
+A better system asks:
+
+> What answer survives after the evidence, repetition, incentives, contradictions and uncertainty have been examined?
+
+Search found information.
+
+AI search summarised information.
+
+The next generation of search must audit information before turning it into knowledge.
+
+The user should still be able to ask a normal question and receive a normal, clear answer.
+
+But underneath, abnormal standards should apply.
+
+The promise is:
+
+> Ask normally. Get an answer that has already questioned its sources.
+
+## The essential conclusion
+
+The deepest flaw is not simply that AI sometimes gives incorrect information.
+
+It is that AI can take a commercially engineered information environment, remove the visible signs of commerce and present its conclusions as neutral knowledge.
+
+That is why the central statement is:
+
+# AI converts the commercially engineered internet into answers.
+
+And the clearest explanation is:
+
+# AI removed the advertisement--but kept the advertiser's answer.
+
+The correction is not to reject all expertise, all institutions, all commercial sources or all dominant conclusions.
+
+The correction is to require every answer to earn trust through:
+
+* original evidence,
+* source transparency,
+* independence analysis,
+* claim ancestry,
+* contradiction search,
+* evidence-question matching,
+* and honest uncertainty.
+
+Do not merely tell us what the internet says.
+
+Show us what the evidence actually supports.
+    </script>
+
+    <script>
+      const source = document.getElementById("article-source").textContent.trim();
+      const article = document.getElementById("article");
+
+      function slugify(value) {
+        return value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "");
+      }
+
+      function escapeHtml(value) {
+        return value
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function closeList(state, html) {
+        if (state.list) {
+          html.push(`</${state.list}>`);
+          state.list = "";
+        }
+      }
+
+      function renderMarkdown(markdown) {
+        const html = [];
+        const state = { list: "" };
+        const lines = markdown.split(/\r?\n/);
+
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+
+          if (!line) {
+            closeList(state, html);
+            continue;
+          }
+
+          if (line.startsWith("# ")) {
+            closeList(state, html);
+            const text = line.slice(2);
+            const tag = html.length === 0 ? "h1" : "h2";
+            html.push(`<${tag} id="${slugify(text)}">${escapeHtml(text)}</${tag}>`);
+            continue;
+          }
+
+          if (line.startsWith("## ")) {
+            closeList(state, html);
+            const text = line.slice(3);
+            html.push(`<h2 id="${slugify(text)}">${escapeHtml(text)}</h2>`);
+            continue;
+          }
+
+          if (line.startsWith("> ")) {
+            closeList(state, html);
+            html.push(`<blockquote>${escapeHtml(line.slice(2))}</blockquote>`);
+            continue;
+          }
+
+          if (line.startsWith("* ")) {
+            if (state.list !== "ul") {
+              closeList(state, html);
+              state.list = "ul";
+              html.push("<ul>");
+            }
+            html.push(`<li>${escapeHtml(line.slice(2))}</li>`);
+            continue;
+          }
+
+          if (/^\d+\.\s/.test(line)) {
+            if (state.list !== "ol") {
+              closeList(state, html);
+              state.list = "ol";
+              html.push("<ol>");
+            }
+            html.push(`<li>${escapeHtml(line.replace(/^\d+\.\s/, ""))}</li>`);
+            continue;
+          }
+
+          closeList(state, html);
+          html.push(`<p>${escapeHtml(line)}</p>`);
+        }
+
+        closeList(state, html);
+        return html.join("\n");
+      }
+
+      article.innerHTML = renderMarkdown(source);
+    </script>
+  </body>
+</html>
