@@ -226,6 +226,58 @@
         font-weight: 700;
       }
 
+      .progress-card {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        padding: 16px;
+      }
+
+      .progress-card h2 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .progress-list {
+        display: grid;
+        gap: 8px;
+        margin: 12px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .progress-stage {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f7f5f0;
+        padding: 10px 12px;
+        color: rgba(17, 19, 22, 0.62);
+        font-size: 13px;
+        font-weight: 750;
+      }
+
+      .progress-stage::before {
+        content: "";
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(38, 93, 145, 0.35);
+        border-radius: 999px;
+      }
+
+      .progress-stage.done {
+        color: var(--ink);
+        background: rgba(68, 100, 87, 0.1);
+      }
+
+      .progress-stage.done::before {
+        border-color: var(--moss);
+        background: var(--moss);
+      }
+
       .panel {
         border: 1px solid var(--line);
         border-radius: 8px;
@@ -244,6 +296,21 @@
         padding: 7px 10px;
         font-size: 12px;
         font-weight: 800;
+      }
+
+      .answer-placeholder {
+        margin-top: 18px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        background: #f7f5f0;
+        padding: 16px;
+        color: rgba(17, 19, 22, 0.62);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .is-hidden {
+        display: none;
       }
 
       .answer-title {
@@ -456,8 +523,8 @@
           <div class="search-box" aria-label="Demonstration question">
             <textarea id="question">My child is 12 years old. Could getting braces at this age affect her facial development?</textarea>
             <div class="search-actions">
-              <span class="hint">GitHub Pages preview runs in demonstration mode.</span>
-              <button type="button" id="demoButton">Show demonstration answer</button>
+              <span class="hint">Public demo search. The full Next.js app runs the same flow through API routes.</span>
+              <button type="button" id="demoButton">Search with NOT GPT</button>
             </div>
           </div>
 
@@ -466,18 +533,30 @@
             <button class="chip" type="button">Does this supplement claim have independent evidence?</button>
             <button class="chip" type="button">What evidence contradicts the dominant position?</button>
           </div>
+
+          <div class="progress-card is-hidden" id="progressCard" aria-live="polite">
+            <h2>Evidence protocol</h2>
+            <ol class="progress-list">
+              <li class="progress-stage">Understanding your question</li>
+              <li class="progress-stage">Finding original evidence</li>
+              <li class="progress-stage">Checking repeated claims</li>
+              <li class="progress-stage">Examining source incentives</li>
+              <li class="progress-stage">Looking for credible contradictions</li>
+              <li class="progress-stage">Identifying uncertainty</li>
+              <li class="progress-stage">Building your answer</li>
+            </ol>
+          </div>
         </div>
 
         <aside class="panel" id="answer" aria-live="polite">
           <span class="demo-label">Illustrative demonstration data</span>
           <h2 class="answer-title">Direct answer</h2>
-          <p class="answer-copy">
-            In this demo, braces at age 12 can affect tooth position and bite relationships, but the
-            evidence preview does not support a confident claim that routine braces reliably harm long-term
-            facial development. The key issue is evidence fit: many sources measure dental or skeletal proxy
-            outcomes, not the broader facial-development concern a parent usually means.
-          </p>
-          <div class="sources">
+          <div class="answer-placeholder" id="answerPlaceholder">
+            Ask a question, then run the demonstration search. The clean answer appears here after the evidence
+            sequence completes.
+          </div>
+          <p class="answer-copy is-hidden"></p>
+          <div class="sources is-hidden">
             <div class="source-row">
               <strong>What we can say confidently</strong>
               <p>Dental alignment evidence is stronger than long-term facial-development evidence.</p>
@@ -570,6 +649,11 @@
       const textarea = document.getElementById("question");
       const answer = document.getElementById("answer");
       const demoButton = document.getElementById("demoButton");
+      const progressCard = document.getElementById("progressCard");
+      const stages = [...document.querySelectorAll(".progress-stage")];
+      const answerCopy = answer.querySelector(".answer-copy");
+      const answerSources = answer.querySelector(".sources");
+      const answerPlaceholder = document.getElementById("answerPlaceholder");
       const chips = document.querySelectorAll(".chip");
 
       const answers = {
@@ -582,11 +666,40 @@
       };
 
       function setAnswer(copy) {
-        answer.querySelector(".answer-copy").textContent = copy;
+        answerCopy.textContent = copy;
+        answerCopy.classList.remove("is-hidden");
+        answerSources.classList.remove("is-hidden");
+        answerPlaceholder.classList.add("is-hidden");
+      }
+
+      function resetProtocol() {
+        progressCard.classList.remove("is-hidden");
+        stages.forEach((stage) => stage.classList.remove("done"));
+      }
+
+      function runDemoSearch(copy) {
+        resetProtocol();
+        demoButton.textContent = "Searching...";
+        demoButton.disabled = true;
+        answerCopy.classList.add("is-hidden");
+        answerSources.classList.add("is-hidden");
+        answerPlaceholder.classList.remove("is-hidden");
+        answerPlaceholder.textContent = "Running the demonstration evidence protocol...";
+
+        stages.forEach((stage, index) => {
+          window.setTimeout(() => {
+            stage.classList.add("done");
+            if (index === stages.length - 1) {
+              setAnswer(copy);
+              demoButton.textContent = "Search with NOT GPT";
+              demoButton.disabled = false;
+            }
+          }, 220 + index * 230);
+        });
       }
 
       demoButton.addEventListener("click", () => {
-        setAnswer(
+        runDemoSearch(
           "In this demo, braces at age 12 can affect tooth position and bite relationships, but the evidence preview does not support a confident claim that routine braces reliably harm long-term facial development. The key issue is evidence fit: many sources measure dental or skeletal proxy outcomes, not the broader facial-development concern a parent usually means."
         );
       });
@@ -595,9 +708,9 @@
         chip.addEventListener("click", () => {
           textarea.value = chip.textContent;
           const text = chip.textContent.toLowerCase();
-          if (text.includes("repeating")) setAnswer(answers.repeat);
-          if (text.includes("supplement")) setAnswer(answers.supplement);
-          if (text.includes("contradicts")) setAnswer(answers.contradict);
+          if (text.includes("repeating")) runDemoSearch(answers.repeat);
+          if (text.includes("supplement")) runDemoSearch(answers.supplement);
+          if (text.includes("contradicts")) runDemoSearch(answers.contradict);
         });
       });
     </script>
