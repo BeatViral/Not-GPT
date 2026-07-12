@@ -6,40 +6,46 @@
     <title>NOT GPT</title>
     <meta
       name="description"
-      content="NOT GPT is a clean answer engine that questions source evidence before answering."
+      content="NOT GPT is a search engine that questions its sources before answering."
     />
     <style>
       :root {
         color-scheme: light;
-        --ink: #111316;
+        --ink: #101216;
         --paper: #fbfaf7;
-        --white: #ffffff;
-        --line: #dedbd2;
-        --moss: #446457;
-        --signal: #265d91;
+        --panel: #ffffff;
+        --soft: #f2f4f1;
+        --line: #d9d7ce;
+        --muted: #646a68;
+        --moss: #385f50;
+        --blue: #245f94;
         --rust: #9a4f2e;
-        --caution: #a36b00;
+        --amber: #a66c00;
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
         background:
-          linear-gradient(180deg, rgba(251, 250, 247, 0.97), rgba(247, 249, 248, 0.98)),
+          linear-gradient(180deg, rgba(251, 250, 247, 0.98), rgba(247, 249, 248, 0.98)),
           repeating-linear-gradient(
             90deg,
-            rgba(18, 19, 22, 0.035) 0,
-            rgba(18, 19, 22, 0.035) 1px,
+            rgba(16, 18, 22, 0.035) 0,
+            rgba(16, 18, 22, 0.035) 1px,
             transparent 1px,
-            transparent 78px
+            transparent 84px
           );
         color: var(--ink);
         font-family:
-          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial,
           sans-serif;
       }
 
@@ -48,14 +54,28 @@
         text-decoration: none;
       }
 
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 3px;
+      }
+
       .shell {
-        width: min(1180px, calc(100% - 32px));
+        width: min(1120px, calc(100% - 32px));
         margin: 0 auto;
       }
 
-      header {
+      .topbar {
         border-bottom: 1px solid var(--line);
-        background: rgba(251, 250, 247, 0.88);
+        background: rgba(251, 250, 247, 0.94);
         backdrop-filter: blur(14px);
       }
 
@@ -64,14 +84,14 @@
         align-items: center;
         justify-content: space-between;
         gap: 20px;
-        min-height: 72px;
+        min-height: 70px;
       }
 
       .brand {
         display: inline-flex;
         align-items: center;
         gap: 12px;
-        font-weight: 800;
+        font-weight: 850;
       }
 
       .mark {
@@ -82,92 +102,111 @@
         border-radius: 8px;
         background: var(--ink);
         color: var(--paper);
-        font-size: 18px;
       }
 
-      .nav-links {
+      .navlinks {
         display: flex;
         align-items: center;
-        gap: 10px;
-        color: rgba(17, 19, 22, 0.68);
+        gap: 8px;
+        color: rgba(16, 18, 22, 0.68);
         font-size: 14px;
-        font-weight: 700;
+        font-weight: 760;
       }
 
-      .nav-links a {
+      .navlinks a {
         border-radius: 8px;
         padding: 10px 12px;
       }
 
-      .nav-links a:hover {
-        background: rgba(17, 19, 22, 0.06);
+      .navlinks a:hover {
+        background: rgba(16, 18, 22, 0.06);
         color: var(--ink);
       }
 
       main {
-        padding: 64px 0 72px;
+        padding: 42px 0 70px;
       }
 
       .hero {
-        display: grid;
-        grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.72fr);
-        gap: 36px;
-        align-items: start;
+        max-width: 940px;
       }
 
       .eyebrow {
-        margin: 0 0 18px;
+        margin: 0 0 14px;
         color: var(--moss);
         font-size: 13px;
-        font-weight: 800;
+        font-weight: 850;
         letter-spacing: 0.16em;
         text-transform: uppercase;
       }
 
       h1 {
-        max-width: 880px;
         margin: 0;
-        font-size: clamp(42px, 7vw, 82px);
+        font-size: clamp(42px, 7vw, 86px);
         line-height: 0.98;
         letter-spacing: 0;
       }
 
       .subhead {
-        margin: 24px 0 0;
-        color: var(--signal);
-        font-size: clamp(24px, 3.2vw, 42px);
-        font-weight: 800;
-        line-height: 1.12;
+        margin: 20px 0 0;
+        color: var(--blue);
+        font-size: clamp(26px, 3.6vw, 46px);
+        font-weight: 850;
+        line-height: 1.08;
       }
 
       .support {
-        max-width: 690px;
-        margin: 24px 0 0;
-        color: rgba(17, 19, 22, 0.72);
+        max-width: 760px;
+        margin: 20px 0 0;
+        color: rgba(16, 18, 22, 0.72);
         font-size: 19px;
         line-height: 1.65;
       }
 
-      .search-box {
-        margin-top: 34px;
+      .search-card {
+        margin-top: 32px;
         overflow: hidden;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: var(--white);
-        box-shadow: 0 24px 70px rgba(17, 19, 22, 0.08);
+        background: var(--panel);
+        box-shadow: 0 24px 70px rgba(16, 18, 22, 0.08);
       }
 
-      .search-box textarea {
+      .search-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--line);
+        padding: 14px 16px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 760;
+      }
+
+      .demo-pill {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(166, 108, 0, 0.28);
+        border-radius: 8px;
+        background: rgba(166, 108, 0, 0.09);
+        color: var(--amber);
+        padding: 6px 9px;
+        font-size: 12px;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+
+      textarea {
         display: block;
         width: 100%;
-        min-height: 128px;
+        min-height: 142px;
         resize: vertical;
         border: 0;
-        background: #f7f5f0;
+        background: #f6f4ef;
         color: var(--ink);
         padding: 20px;
-        font: inherit;
-        font-size: 17px;
+        font-size: 18px;
         line-height: 1.55;
         outline: none;
       }
@@ -182,535 +221,529 @@
       }
 
       .hint {
-        color: rgba(17, 19, 22, 0.55);
+        color: var(--muted);
         font-size: 14px;
       }
 
-      button,
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 44px;
-        border: 1px solid transparent;
+      .primary {
+        min-height: 46px;
+        border: 0;
         border-radius: 8px;
-        padding: 0 16px;
         background: var(--ink);
         color: var(--paper);
-        font: inherit;
-        font-size: 14px;
-        font-weight: 800;
-        cursor: pointer;
+        padding: 0 18px;
+        font-weight: 850;
       }
 
-      .button.secondary {
-        border-color: var(--line);
-        background: var(--white);
-        color: var(--ink);
+      .primary:disabled {
+        cursor: wait;
+        opacity: 0.7;
       }
 
-      .chips {
+      .examples {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
         margin-top: 14px;
       }
 
-      .chip {
+      .example {
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: var(--white);
-        color: rgba(17, 19, 22, 0.7);
-        padding: 9px 11px;
+        background: var(--panel);
+        color: rgba(16, 18, 22, 0.7);
+        padding: 10px 12px;
+        text-align: left;
         font-size: 13px;
-        font-weight: 700;
+        font-weight: 750;
       }
 
-      .progress-card {
-        margin-top: 18px;
+      .example:hover {
+        border-color: var(--blue);
+        color: var(--ink);
+      }
+
+      .result-area {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 18px;
+        margin-top: 26px;
+        align-items: start;
+      }
+
+      .progress,
+      .answer,
+      .audit,
+      .method {
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: var(--white);
+        background: var(--panel);
+      }
+
+      .progress {
         padding: 16px;
       }
 
-      .progress-card h2 {
+      .panel-title {
         margin: 0;
-        font-size: 16px;
+        font-size: 18px;
       }
 
       .progress-list {
         display: grid;
         gap: 8px;
-        margin: 12px 0 0;
+        margin: 14px 0 0;
         padding: 0;
         list-style: none;
       }
 
-      .progress-stage {
+      .stage {
         display: flex;
         align-items: center;
         gap: 10px;
+        min-height: 43px;
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: #f7f5f0;
-        padding: 10px 12px;
-        color: rgba(17, 19, 22, 0.62);
+        background: var(--soft);
+        padding: 9px 11px;
+        color: rgba(16, 18, 22, 0.58);
         font-size: 13px;
-        font-weight: 750;
+        font-weight: 760;
       }
 
-      .progress-stage::before {
+      .stage::before {
         content: "";
         width: 12px;
         height: 12px;
-        border: 2px solid rgba(38, 93, 145, 0.35);
+        border: 2px solid rgba(36, 95, 148, 0.34);
         border-radius: 999px;
       }
 
-      .progress-stage.done {
+      .stage.done {
+        background: rgba(56, 95, 80, 0.1);
         color: var(--ink);
-        background: rgba(68, 100, 87, 0.1);
       }
 
-      .progress-stage.done::before {
+      .stage.done::before {
         border-color: var(--moss);
         background: var(--moss);
       }
 
-      .panel {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--white);
-        padding: 24px;
-        box-shadow: 0 1px 0 rgba(17, 19, 22, 0.08);
+      .answer {
+        overflow: hidden;
       }
 
-      .demo-label {
-        display: inline-flex;
-        align-items: center;
-        border: 1px solid rgba(163, 107, 0, 0.26);
-        border-radius: 8px;
-        background: rgba(163, 107, 0, 0.1);
-        color: var(--caution);
-        padding: 7px 10px;
-        font-size: 12px;
-        font-weight: 800;
+      .answer-header {
+        border-bottom: 1px solid var(--line);
+        padding: 18px;
       }
 
-      .answer-placeholder {
-        margin-top: 18px;
+      .answer-header h2 {
+        margin: 12px 0 0;
+        font-size: 28px;
+      }
+
+      .answer-body {
+        display: grid;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .notice {
         border: 1px dashed var(--line);
         border-radius: 8px;
-        background: #f7f5f0;
+        background: var(--soft);
         padding: 16px;
-        color: rgba(17, 19, 22, 0.62);
-        font-size: 14px;
+        color: rgba(16, 18, 22, 0.66);
+        font-size: 15px;
         line-height: 1.55;
       }
 
-      .is-hidden {
-        display: none;
-      }
-
-      .answer-title {
-        margin: 18px 0 0;
-        font-size: 24px;
-        line-height: 1.22;
-      }
-
-      .answer-copy {
-        margin: 14px 0 0;
-        color: rgba(17, 19, 22, 0.72);
-        font-size: 15px;
-        line-height: 1.65;
-      }
-
-      .section-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 16px;
-        margin-top: 44px;
-      }
-
-      .small-card {
+      .answer-section {
         border: 1px solid var(--line);
         border-radius: 8px;
-        background: rgba(255, 255, 255, 0.76);
-        padding: 20px;
+        background: #f7f5f0;
+        padding: 16px;
       }
 
-      .small-card h2,
-      .goo h2 {
+      .answer-section h3 {
+        margin: 0;
+        font-size: 16px;
+      }
+
+      .answer-section p,
+      .answer-section li,
+      .method p,
+      .audit p {
+        color: rgba(16, 18, 22, 0.68);
+        font-size: 14px;
+        line-height: 1.62;
+      }
+
+      .answer-section p {
+        margin: 9px 0 0;
+      }
+
+      .answer-section ul {
+        margin: 10px 0 0;
+        padding-left: 19px;
+      }
+
+      .sources {
+        display: grid;
+        gap: 9px;
+        margin-top: 10px;
+      }
+
+      .source {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 12px;
+      }
+
+      .source strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .source span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 740;
+      }
+
+      .side-stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .audit,
+      .method {
+        padding: 16px;
+      }
+
+      .method-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 46px;
+      }
+
+      .method h2 {
         margin: 0;
         font-size: 18px;
       }
 
-      .small-card p,
-      .goo p,
-      .source-row p {
-        margin: 10px 0 0;
-        color: rgba(17, 19, 22, 0.66);
-        font-size: 14px;
-        line-height: 1.6;
-      }
-
-      .protocol {
-        margin-top: 54px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--white);
-        padding: 24px;
-      }
-
-      .protocol h2 {
-        margin: 0;
-        font-size: 24px;
-      }
-
-      .steps {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 18px;
-      }
-
-      .step {
-        min-height: 74px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #f7f5f0;
-        padding: 12px;
-        font-size: 13px;
-        font-weight: 750;
-        line-height: 1.35;
-      }
-
-      .step span {
-        display: block;
-        margin-bottom: 6px;
-        color: var(--signal);
-        font-weight: 900;
-      }
-
-      .sources {
-        margin-top: 18px;
-        display: grid;
-        gap: 10px;
-      }
-
-      .source-row {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #f7f5f0;
-        padding: 14px;
-      }
-
-      .source-row strong {
-        display: block;
-        font-size: 14px;
-      }
-
-      .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-top: 9px;
-      }
-
-      .tag {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--white);
-        padding: 5px 8px;
-        color: rgba(17, 19, 22, 0.58);
-        font-size: 12px;
-        font-weight: 800;
-      }
-
-      .goo {
-        display: grid;
-        grid-template-columns: 0.85fr 1.15fr;
-        gap: 28px;
-        margin-top: 54px;
-        border-top: 1px solid var(--line);
-        padding-top: 44px;
-      }
-
-      .opportunities {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+      .hidden {
+        display: none;
       }
 
       footer {
         border-top: 1px solid var(--line);
-        padding: 28px 0;
-        color: rgba(17, 19, 22, 0.58);
+        padding: 24px 0;
+        color: rgba(16, 18, 22, 0.58);
         font-size: 14px;
       }
 
       @media (max-width: 920px) {
-        .hero,
-        .goo {
+        .result-area,
+        .method-grid {
           grid-template-columns: 1fr;
         }
+      }
 
-        .section-grid,
-        .steps,
-        .opportunities {
-          grid-template-columns: 1fr;
+      @media (max-width: 640px) {
+        .shell {
+          width: min(100% - 24px, 1120px);
         }
 
         .nav {
           align-items: flex-start;
           flex-direction: column;
-          padding: 16px 0;
+          padding: 14px 0;
         }
 
-        main {
-          padding-top: 42px;
-        }
-      }
-
-      @media (max-width: 620px) {
-        .shell {
-          width: min(100% - 24px, 1180px);
+        .navlinks {
+          flex-wrap: wrap;
         }
 
+        .search-label,
         .search-actions {
           align-items: stretch;
           flex-direction: column;
         }
 
-        button,
-        .button {
+        .primary {
           width: 100%;
-        }
-
-        .nav-links {
-          flex-wrap: wrap;
         }
       }
     </style>
   </head>
   <body>
-    <header>
+    <header class="topbar">
       <div class="shell nav">
         <a class="brand" href="/Not-GPT/" aria-label="NOT GPT home">
           <span class="mark">N</span>
           <span>NOT GPT</span>
         </a>
-        <nav class="nav-links" aria-label="Primary navigation">
-          <a href="#protocol">Evidence Protocol</a>
-          <a href="#goo">GOO</a>
-          <a href="https://github.com/BeatViral/Not-GPT">GitHub</a>
+        <nav class="navlinks" aria-label="Primary navigation">
+          <a href="#answer">Answer</a>
+          <a href="#method">Method</a>
+          <a href="https://github.com/BeatViral/Not-GPT">Repository</a>
         </nav>
       </div>
     </header>
 
     <main class="shell">
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Search that questions its sources before answering.</p>
-          <h1>AI converts the commercially engineered internet into answers.</h1>
-          <p class="subhead">Not GPT doesn't.</p>
-          <p class="support">
-            NOT GPT is a clean answer engine built around evidence cleaning. It checks repetition,
-            source incentives, original evidence, contradiction and uncertainty before it writes the answer.
-          </p>
+      <section class="hero" aria-labelledby="headline">
+        <p class="eyebrow">Search that questions its sources before answering.</p>
+        <h1 id="headline">AI converts the commercially engineered internet into answers.</h1>
+        <p class="subhead">Not GPT doesn't.</p>
+        <p class="support">
+          Ask normally. NOT GPT checks source incentives, repeated claims, original evidence,
+          contradictions and uncertainty before it gives you a clean answer.
+        </p>
 
-          <div class="search-box" aria-label="Demonstration question">
-            <textarea id="question">My child is 12 years old. Could getting braces at this age affect her facial development?</textarea>
-            <div class="search-actions">
-              <span class="hint">Public demo search. The full Next.js app runs the same flow through API routes.</span>
-              <button type="button" id="demoButton">Search with NOT GPT</button>
+        <form class="search-card" id="searchForm">
+          <div class="search-label">
+            <span>Ask NOT GPT</span>
+            <span class="demo-pill">Demonstration mode</span>
+          </div>
+          <label for="question" class="hidden">Question</label>
+          <textarea id="question">My child is 12 years old. Could getting braces at this age affect her facial development?</textarea>
+          <div class="search-actions">
+            <span class="hint">Enter searches. Shift + Enter adds a new line.</span>
+            <button class="primary" type="submit" id="searchButton">Search with NOT GPT</button>
+          </div>
+        </form>
+
+        <div class="examples" aria-label="Example questions">
+          <button class="example" type="button">Are these websites repeating one original claim?</button>
+          <button class="example" type="button">Does this supplement claim have independent evidence?</button>
+          <button class="example" type="button">What evidence contradicts the dominant position?</button>
+        </div>
+      </section>
+
+      <section class="result-area" aria-label="Search result">
+        <div class="answer" id="answer">
+          <div class="answer-header">
+            <span class="demo-pill">Illustrative demonstration data</span>
+            <h2>Clean answer</h2>
+          </div>
+          <div class="answer-body" id="answerBody">
+            <div class="notice" id="placeholder">
+              Run the demonstration search. The answer will appear here after NOT GPT completes the evidence
+              protocol.
             </div>
-          </div>
-
-          <div class="chips" aria-label="Example questions">
-            <button class="chip" type="button">Are these websites repeating one original claim?</button>
-            <button class="chip" type="button">Does this supplement claim have independent evidence?</button>
-            <button class="chip" type="button">What evidence contradicts the dominant position?</button>
-          </div>
-
-          <div class="progress-card is-hidden" id="progressCard" aria-live="polite">
-            <h2>Evidence protocol</h2>
-            <ol class="progress-list">
-              <li class="progress-stage">Understanding your question</li>
-              <li class="progress-stage">Finding original evidence</li>
-              <li class="progress-stage">Checking repeated claims</li>
-              <li class="progress-stage">Examining source incentives</li>
-              <li class="progress-stage">Looking for credible contradictions</li>
-              <li class="progress-stage">Identifying uncertainty</li>
-              <li class="progress-stage">Building your answer</li>
-            </ol>
           </div>
         </div>
 
-        <aside class="panel" id="answer" aria-live="polite">
-          <span class="demo-label">Illustrative demonstration data</span>
-          <h2 class="answer-title">Direct answer</h2>
-          <div class="answer-placeholder" id="answerPlaceholder">
-            Ask a question, then run the demonstration search. The clean answer appears here after the evidence
-            sequence completes.
+        <aside class="side-stack">
+          <div class="progress" aria-live="polite">
+            <h2 class="panel-title">Evidence protocol</h2>
+            <ol class="progress-list" id="stages">
+              <li class="stage">Understanding your question</li>
+              <li class="stage">Finding original evidence</li>
+              <li class="stage">Checking repeated claims</li>
+              <li class="stage">Examining source incentives</li>
+              <li class="stage">Looking for credible contradictions</li>
+              <li class="stage">Identifying uncertainty</li>
+              <li class="stage">Building your answer</li>
+            </ol>
           </div>
-          <p class="answer-copy is-hidden"></p>
-          <div class="sources is-hidden">
-            <div class="source-row">
-              <strong>What we can say confidently</strong>
-              <p>Dental alignment evidence is stronger than long-term facial-development evidence.</p>
-            </div>
-            <div class="source-row">
-              <strong>What remains uncertain</strong>
-              <p>Treatment subtype, growth stage, extraction decisions and follow-up duration materially matter.</p>
-            </div>
-            <div class="source-row">
-              <strong>Strongest sources</strong>
-              <div class="tags">
-                <span class="tag">Primary evidence</span>
-                <span class="tag">Systematic review</span>
-                <span class="tag">Professional guidance</span>
-                <span class="tag">Commercial source checked</span>
-              </div>
-            </div>
+
+          <div class="audit">
+            <h2 class="panel-title">Answer ingredients</h2>
+            <p>
+              Primary evidence, systematic review, professional guidance, commercial source checked,
+              repetition collapsed.
+            </p>
           </div>
         </aside>
       </section>
 
-      <section class="section-grid" aria-label="Product principles">
-        <article class="small-card">
+      <section class="method-grid" id="method" aria-label="Method">
+        <article class="method">
           <h2>Visibility is not authority.</h2>
           <p>NOT GPT does not treat the most visible pages as the strongest evidence.</p>
         </article>
-        <article class="small-card">
+        <article class="method">
           <h2>Repetition is not proof.</h2>
-          <p>Ten websites may still be one claim, one citation chain or one commercial idea repeated.</p>
+          <p>Twenty pages repeating one claim are not twenty independent pieces of evidence.</p>
         </article>
-        <article class="small-card">
-          <h2>Every answer has ingredients.</h2>
-          <p>The default answer stays clean, while the optional audit shows how the answer was built.</p>
+        <article class="method">
+          <h2>GOO stays separate.</h2>
+          <p>GOO opportunities never enter NOT GPT answers, rankings, citations or prompts.</p>
         </article>
-      </section>
-
-      <section class="protocol" id="protocol">
-        <p class="eyebrow">Invisible standards underneath</p>
-        <h2>The NOT GPT evidence protocol</h2>
-        <div class="steps">
-          <div class="step"><span>1</span>Understand the exact question</div>
-          <div class="step"><span>2</span>Find original evidence</div>
-          <div class="step"><span>3</span>Collapse repeated claims</div>
-          <div class="step"><span>4</span>Classify source incentives</div>
-          <div class="step"><span>5</span>Compare evidence to the question</div>
-          <div class="step"><span>6</span>Look for credible contradictions</div>
-          <div class="step"><span>7</span>Construct material uncertainty</div>
-          <div class="step"><span>8</span>Generate a clean answer</div>
-        </div>
-      </section>
-
-      <section class="goo" id="goo">
-        <div>
-          <p class="eyebrow">GOO: Generative Opportunity Optimization</p>
-          <h2>The opportunity protocol for the inventor economy.</h2>
-          <p>
-            GOO is separate from NOT GPT. It turns missing roles around inventions into structured,
-            machine-readable opportunities that humans and AI agents can inspect.
-          </p>
-        </div>
-        <div class="opportunities">
-          <article class="small-card">
-            <h2>Truth Sachet</h2>
-            <p>Seeking a research institution pilot for structured evidence-label workflows.</p>
-          </article>
-          <article class="small-card">
-            <h2>31 Seats</h2>
-            <p>Opening founding pilot roles for precise participation testing.</p>
-          </article>
-          <article class="small-card">
-            <h2>Reverse Car Market</h2>
-            <p>Seeking a dealership pilot for buyer-demand-first workflows.</p>
-          </article>
-          <article class="small-card">
-            <h2>Law On Demand</h2>
-            <p>Seeking a legal research partner to define safe triage boundaries.</p>
-          </article>
-        </div>
       </section>
     </main>
 
     <footer>
       <div class="shell">
-        GitHub Pages preview. The full Next.js application, APIs, Supabase schema and tests are in the
+        This GitHub Pages version is a static demonstration search page. The full Next.js app with API routes,
+        provider architecture, Supabase schema and tests is in the
         <a href="https://github.com/BeatViral/Not-GPT">BeatViral/Not-GPT repository</a>.
       </div>
     </footer>
 
     <script>
-      const textarea = document.getElementById("question");
-      const answer = document.getElementById("answer");
-      const demoButton = document.getElementById("demoButton");
-      const progressCard = document.getElementById("progressCard");
-      const stages = [...document.querySelectorAll(".progress-stage")];
-      const answerCopy = answer.querySelector(".answer-copy");
-      const answerSources = answer.querySelector(".sources");
-      const answerPlaceholder = document.getElementById("answerPlaceholder");
-      const chips = document.querySelectorAll(".chip");
+      const form = document.getElementById("searchForm");
+      const question = document.getElementById("question");
+      const button = document.getElementById("searchButton");
+      const answerBody = document.getElementById("answerBody");
+      const stages = [...document.querySelectorAll(".stage")];
+      const examples = document.querySelectorAll(".example");
 
-      const answers = {
-        repeat:
-          "NOT GPT would trace whether the visible pages are independent evidence or the same claim repeated through one citation chain.",
-        supplement:
-          "NOT GPT would separate human studies, mechanism claims, commercial pages, affiliate incentives and unresolved safety questions.",
-        contradict:
-          "NOT GPT would actively seek credible negative findings and methodological criticism, then weight them by relevance and quality."
+      const demoAnswers = {
+        braces: {
+          direct:
+            "In this demonstration answer, braces at age 12 can affect tooth position and bite relationships, but this demo evidence does not support a confident claim that routine braces reliably harm long-term facial development.",
+          confident: [
+            "The strongest support is for changes in tooth alignment and bite relationships.",
+            "Some commercial pages broaden narrower timing guidance into stronger claims about guiding facial growth.",
+            "Personal reports are worth noticing as concerns, but they do not establish causation."
+          ],
+          uncertain: [
+            "Treatment details matter: extraction, expansion, appliance type and growth stage can change the answer.",
+            "Long-term facial-development outcomes are less directly measured than ordinary dental outcomes."
+          ],
+          sources: [
+            ["Illustrative Child Growth and Orthodontic Outcomes Registry", "Observational study"],
+            ["Illustrative Review of Orthodontics and Facial Growth Endpoints", "Systematic review"],
+            ["Illustrative Pediatric Orthodontic Timing Guidance", "Professional guidance"],
+            ["Illustrative Clinic Page About Early Smile Growth", "Commercial source checked"]
+          ]
+        },
+        repeat: {
+          direct:
+            "NOT GPT would trace whether the visible pages are independent evidence or the same claim repeated through one source, one citation chain or one ownership group.",
+          confident: [
+            "Repeated wording is not counted as independent proof.",
+            "Original evidence gets separated from summaries and commercial explainers."
+          ],
+          uncertain: [
+            "Some source ownership or citation relationships may remain unknown.",
+            "A claim can be widely repeated and still be true; repetition alone does not settle it."
+          ],
+          sources: [
+            ["Original evidence source", "Primary evidence"],
+            ["Repeated article cluster", "Repetition checked"],
+            ["Citation chain map", "Lineage audit"]
+          ]
+        },
+        supplement: {
+          direct:
+            "NOT GPT would separate human evidence from mechanism claims, commercial claims, affiliate incentives and unresolved safety questions before answering.",
+          confident: [
+            "Human outcome evidence matters more than generic biological plausibility.",
+            "Affiliate and commercial incentives should be visible without automatically condemning the source."
+          ],
+          uncertain: [
+            "Dose, population, interactions and publication bias may materially affect the answer.",
+            "Short-term marker changes may not prove durable real-world benefit."
+          ],
+          sources: [
+            ["Human outcome study", "Primary evidence"],
+            ["Safety review", "Systematic review"],
+            ["Affiliate review page", "Incentive checked"]
+          ]
+        },
+        contradict: {
+          direct:
+            "NOT GPT would actively seek credible negative findings, methodological criticism and alternative interpretations, then weight them by quality and relevance.",
+          confident: [
+            "Contradiction is not automatically truth.",
+            "A dominant conclusion can be correct, but it still has to earn that position."
+          ],
+          uncertain: [
+            "Some dissent may be low quality or irrelevant.",
+            "Evidence may test a narrower question than the user actually asked."
+          ],
+          sources: [
+            ["Negative finding", "Contradiction"],
+            ["Methods critique", "Applicability check"],
+            ["Dominant guideline", "Professional guidance"]
+          ]
+        }
       };
 
-      function setAnswer(copy) {
-        answerCopy.textContent = copy;
-        answerCopy.classList.remove("is-hidden");
-        answerSources.classList.remove("is-hidden");
-        answerPlaceholder.classList.add("is-hidden");
+      function classifyQuestion(value) {
+        const text = value.toLowerCase();
+        if (text.includes("repeating") || text.includes("original claim")) return "repeat";
+        if (text.includes("supplement")) return "supplement";
+        if (text.includes("contradict")) return "contradict";
+        return "braces";
       }
 
-      function resetProtocol() {
-        progressCard.classList.remove("is-hidden");
+      function renderAnswer(answer) {
+        answerBody.innerHTML = `
+          <section class="answer-section">
+            <h3>Direct answer</h3>
+            <p>${answer.direct}</p>
+          </section>
+          <section class="answer-section">
+            <h3>What we can say confidently</h3>
+            <ul>${answer.confident.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+          <section class="answer-section">
+            <h3>What remains uncertain</h3>
+            <ul>${answer.uncertain.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>
+          <section class="answer-section">
+            <h3>Sources</h3>
+            <div class="sources">
+              ${answer.sources
+                .map(([title, type]) => `<div class="source"><strong>${title}</strong><span>${type}</span></div>`)
+                .join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function resetStages() {
         stages.forEach((stage) => stage.classList.remove("done"));
       }
 
-      function runDemoSearch(copy) {
-        resetProtocol();
-        demoButton.textContent = "Searching...";
-        demoButton.disabled = true;
-        answerCopy.classList.add("is-hidden");
-        answerSources.classList.add("is-hidden");
-        answerPlaceholder.classList.remove("is-hidden");
-        answerPlaceholder.textContent = "Running the demonstration evidence protocol...";
+      function runSearch() {
+        const selected = demoAnswers[classifyQuestion(question.value)];
+        button.disabled = true;
+        button.textContent = "Searching...";
+        answerBody.innerHTML =
+          '<div class="notice">Running the demonstration evidence protocol. No live internet research is being claimed on GitHub Pages.</div>';
+        resetStages();
 
         stages.forEach((stage, index) => {
           window.setTimeout(() => {
             stage.classList.add("done");
             if (index === stages.length - 1) {
-              setAnswer(copy);
-              demoButton.textContent = "Search with NOT GPT";
-              demoButton.disabled = false;
+              renderAnswer(selected);
+              button.disabled = false;
+              button.textContent = "Search with NOT GPT";
+              document.getElementById("answer").scrollIntoView({ behavior: "smooth", block: "start" });
             }
-          }, 220 + index * 230);
+          }, 180 + index * 190);
         });
       }
 
-      demoButton.addEventListener("click", () => {
-        runDemoSearch(
-          "In this demo, braces at age 12 can affect tooth position and bite relationships, but the evidence preview does not support a confident claim that routine braces reliably harm long-term facial development. The key issue is evidence fit: many sources measure dental or skeletal proxy outcomes, not the broader facial-development concern a parent usually means."
-        );
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        runSearch();
       });
 
-      chips.forEach((chip) => {
-        chip.addEventListener("click", () => {
-          textarea.value = chip.textContent;
-          const text = chip.textContent.toLowerCase();
-          if (text.includes("repeating")) runDemoSearch(answers.repeat);
-          if (text.includes("supplement")) runDemoSearch(answers.supplement);
-          if (text.includes("contradicts")) runDemoSearch(answers.contradict);
+      question.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          runSearch();
+        }
+      });
+
+      examples.forEach((example) => {
+        example.addEventListener("click", () => {
+          question.value = example.textContent;
+          runSearch();
         });
       });
     </script>
