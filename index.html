@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NOT GPT</title>
+    <meta
+      name="description"
+      content="NOT GPT is a clean answer engine that questions source evidence before answering."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #111316;
+        --paper: #fbfaf7;
+        --white: #ffffff;
+        --line: #dedbd2;
+        --moss: #446457;
+        --signal: #265d91;
+        --rust: #9a4f2e;
+        --caution: #a36b00;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          linear-gradient(180deg, rgba(251, 250, 247, 0.97), rgba(247, 249, 248, 0.98)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(18, 19, 22, 0.035) 0,
+            rgba(18, 19, 22, 0.035) 1px,
+            transparent 1px,
+            transparent 78px
+          );
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(251, 250, 247, 0.88);
+        backdrop-filter: blur(14px);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        min-height: 72px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+      }
+
+      .mark {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: 8px;
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 18px;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(17, 19, 22, 0.68);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .nav-links a {
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+
+      .nav-links a:hover {
+        background: rgba(17, 19, 22, 0.06);
+        color: var(--ink);
+      }
+
+      main {
+        padding: 64px 0 72px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.72fr);
+        gap: 36px;
+        align-items: start;
+      }
+
+      .eyebrow {
+        margin: 0 0 18px;
+        color: var(--moss);
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 880px;
+        margin: 0;
+        font-size: clamp(42px, 7vw, 82px);
+        line-height: 0.98;
+        letter-spacing: 0;
+      }
+
+      .subhead {
+        margin: 24px 0 0;
+        color: var(--signal);
+        font-size: clamp(24px, 3.2vw, 42px);
+        font-weight: 800;
+        line-height: 1.12;
+      }
+
+      .support {
+        max-width: 690px;
+        margin: 24px 0 0;
+        color: rgba(17, 19, 22, 0.72);
+        font-size: 19px;
+        line-height: 1.65;
+      }
+
+      .search-box {
+        margin-top: 34px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        box-shadow: 0 24px 70px rgba(17, 19, 22, 0.08);
+      }
+
+      .search-box textarea {
+        display: block;
+        width: 100%;
+        min-height: 128px;
+        resize: vertical;
+        border: 0;
+        background: #f7f5f0;
+        color: var(--ink);
+        padding: 20px;
+        font: inherit;
+        font-size: 17px;
+        line-height: 1.55;
+        outline: none;
+      }
+
+      .search-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-top: 1px solid var(--line);
+        padding: 14px;
+      }
+
+      .hint {
+        color: rgba(17, 19, 22, 0.55);
+        font-size: 14px;
+      }
+
+      button,
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 0 16px;
+        background: var(--ink);
+        color: var(--paper);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .button.secondary {
+        border-color: var(--line);
+        background: var(--white);
+        color: var(--ink);
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        color: rgba(17, 19, 22, 0.7);
+        padding: 9px 11px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        padding: 24px;
+        box-shadow: 0 1px 0 rgba(17, 19, 22, 0.08);
+      }
+
+      .demo-label {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid rgba(163, 107, 0, 0.26);
+        border-radius: 8px;
+        background: rgba(163, 107, 0, 0.1);
+        color: var(--caution);
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .answer-title {
+        margin: 18px 0 0;
+        font-size: 24px;
+        line-height: 1.22;
+      }
+
+      .answer-copy {
+        margin: 14px 0 0;
+        color: rgba(17, 19, 22, 0.72);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .section-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 44px;
+      }
+
+      .small-card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.76);
+        padding: 20px;
+      }
+
+      .small-card h2,
+      .goo h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+
+      .small-card p,
+      .goo p,
+      .source-row p {
+        margin: 10px 0 0;
+        color: rgba(17, 19, 22, 0.66);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .protocol {
+        margin-top: 54px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        padding: 24px;
+      }
+
+      .protocol h2 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .step {
+        min-height: 74px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f7f5f0;
+        padding: 12px;
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.35;
+      }
+
+      .step span {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--signal);
+        font-weight: 900;
+      }
+
+      .sources {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .source-row {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f7f5f0;
+        padding: 14px;
+      }
+
+      .source-row strong {
+        display: block;
+        font-size: 14px;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 9px;
+      }
+
+      .tag {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--white);
+        padding: 5px 8px;
+        color: rgba(17, 19, 22, 0.58);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .goo {
+        display: grid;
+        grid-template-columns: 0.85fr 1.15fr;
+        gap: 28px;
+        margin-top: 54px;
+        border-top: 1px solid var(--line);
+        padding-top: 44px;
+      }
+
+      .opportunities {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 28px 0;
+        color: rgba(17, 19, 22, 0.58);
+        font-size: 14px;
+      }
+
+      @media (max-width: 920px) {
+        .hero,
+        .goo {
+          grid-template-columns: 1fr;
+        }
+
+        .section-grid,
+        .steps,
+        .opportunities {
+          grid-template-columns: 1fr;
+        }
+
+        .nav {
+          align-items: flex-start;
+          flex-direction: column;
+          padding: 16px 0;
+        }
+
+        main {
+          padding-top: 42px;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .shell {
+          width: min(100% - 24px, 1180px);
+        }
+
+        .search-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        button,
+        .button {
+          width: 100%;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell nav">
+        <a class="brand" href="/Not-GPT/" aria-label="NOT GPT home">
+          <span class="mark">N</span>
+          <span>NOT GPT</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#protocol">Evidence Protocol</a>
+          <a href="#goo">GOO</a>
+          <a href="https://github.com/BeatViral/Not-GPT">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Search that questions its sources before answering.</p>
+          <h1>AI converts the commercially engineered internet into answers.</h1>
+          <p class="subhead">Not GPT doesn't.</p>
+          <p class="support">
+            NOT GPT is a clean answer engine built around evidence cleaning. It checks repetition,
+            source incentives, original evidence, contradiction and uncertainty before it writes the answer.
+          </p>
+
+          <div class="search-box" aria-label="Demonstration question">
+            <textarea id="question">My child is 12 years old. Could getting braces at this age affect her facial development?</textarea>
+            <div class="search-actions">
+              <span class="hint">GitHub Pages preview runs in demonstration mode.</span>
+              <button type="button" id="demoButton">Show demonstration answer</button>
+            </div>
+          </div>
+
+          <div class="chips" aria-label="Example questions">
+            <button class="chip" type="button">Are these websites repeating one original claim?</button>
+            <button class="chip" type="button">Does this supplement claim have independent evidence?</button>
+            <button class="chip" type="button">What evidence contradicts the dominant position?</button>
+          </div>
+        </div>
+
+        <aside class="panel" id="answer" aria-live="polite">
+          <span class="demo-label">Illustrative demonstration data</span>
+          <h2 class="answer-title">Direct answer</h2>
+          <p class="answer-copy">
+            In this demo, braces at age 12 can affect tooth position and bite relationships, but the
+            evidence preview does not support a confident claim that routine braces reliably harm long-term
+            facial development. The key issue is evidence fit: many sources measure dental or skeletal proxy
+            outcomes, not the broader facial-development concern a parent usually means.
+          </p>
+          <div class="sources">
+            <div class="source-row">
+              <strong>What we can say confidently</strong>
+              <p>Dental alignment evidence is stronger than long-term facial-development evidence.</p>
+            </div>
+            <div class="source-row">
+              <strong>What remains uncertain</strong>
+              <p>Treatment subtype, growth stage, extraction decisions and follow-up duration materially matter.</p>
+            </div>
+            <div class="source-row">
+              <strong>Strongest sources</strong>
+              <div class="tags">
+                <span class="tag">Primary evidence</span>
+                <span class="tag">Systematic review</span>
+                <span class="tag">Professional guidance</span>
+                <span class="tag">Commercial source checked</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="section-grid" aria-label="Product principles">
+        <article class="small-card">
+          <h2>Visibility is not authority.</h2>
+          <p>NOT GPT does not treat the most visible pages as the strongest evidence.</p>
+        </article>
+        <article class="small-card">
+          <h2>Repetition is not proof.</h2>
+          <p>Ten websites may still be one claim, one citation chain or one commercial idea repeated.</p>
+        </article>
+        <article class="small-card">
+          <h2>Every answer has ingredients.</h2>
+          <p>The default answer stays clean, while the optional audit shows how the answer was built.</p>
+        </article>
+      </section>
+
+      <section class="protocol" id="protocol">
+        <p class="eyebrow">Invisible standards underneath</p>
+        <h2>The NOT GPT evidence protocol</h2>
+        <div class="steps">
+          <div class="step"><span>1</span>Understand the exact question</div>
+          <div class="step"><span>2</span>Find original evidence</div>
+          <div class="step"><span>3</span>Collapse repeated claims</div>
+          <div class="step"><span>4</span>Classify source incentives</div>
+          <div class="step"><span>5</span>Compare evidence to the question</div>
+          <div class="step"><span>6</span>Look for credible contradictions</div>
+          <div class="step"><span>7</span>Construct material uncertainty</div>
+          <div class="step"><span>8</span>Generate a clean answer</div>
+        </div>
+      </section>
+
+      <section class="goo" id="goo">
+        <div>
+          <p class="eyebrow">GOO: Generative Opportunity Optimization</p>
+          <h2>The opportunity protocol for the inventor economy.</h2>
+          <p>
+            GOO is separate from NOT GPT. It turns missing roles around inventions into structured,
+            machine-readable opportunities that humans and AI agents can inspect.
+          </p>
+        </div>
+        <div class="opportunities">
+          <article class="small-card">
+            <h2>Truth Sachet</h2>
+            <p>Seeking a research institution pilot for structured evidence-label workflows.</p>
+          </article>
+          <article class="small-card">
+            <h2>31 Seats</h2>
+            <p>Opening founding pilot roles for precise participation testing.</p>
+          </article>
+          <article class="small-card">
+            <h2>Reverse Car Market</h2>
+            <p>Seeking a dealership pilot for buyer-demand-first workflows.</p>
+          </article>
+          <article class="small-card">
+            <h2>Law On Demand</h2>
+            <p>Seeking a legal research partner to define safe triage boundaries.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        GitHub Pages preview. The full Next.js application, APIs, Supabase schema and tests are in the
+        <a href="https://github.com/BeatViral/Not-GPT">BeatViral/Not-GPT repository</a>.
+      </div>
+    </footer>
+
+    <script>
+      const textarea = document.getElementById("question");
+      const answer = document.getElementById("answer");
+      const demoButton = document.getElementById("demoButton");
+      const chips = document.querySelectorAll(".chip");
+
+      const answers = {
+        repeat:
+          "NOT GPT would trace whether the visible pages are independent evidence or the same claim repeated through one citation chain.",
+        supplement:
+          "NOT GPT would separate human studies, mechanism claims, commercial pages, affiliate incentives and unresolved safety questions.",
+        contradict:
+          "NOT GPT would actively seek credible negative findings and methodological criticism, then weight them by relevance and quality."
+      };
+
+      function setAnswer(copy) {
+        answer.querySelector(".answer-copy").textContent = copy;
+      }
+
+      demoButton.addEventListener("click", () => {
+        setAnswer(
+          "In this demo, braces at age 12 can affect tooth position and bite relationships, but the evidence preview does not support a confident claim that routine braces reliably harm long-term facial development. The key issue is evidence fit: many sources measure dental or skeletal proxy outcomes, not the broader facial-development concern a parent usually means."
+        );
+      });
+
+      chips.forEach((chip) => {
+        chip.addEventListener("click", () => {
+          textarea.value = chip.textContent;
+          const text = chip.textContent.toLowerCase();
+          if (text.includes("repeating")) setAnswer(answers.repeat);
+          if (text.includes("supplement")) setAnswer(answers.supplement);
+          if (text.includes("contradicts")) setAnswer(answers.contradict);
+        });
+      });
+    </script>
+  </body>
+</html>
